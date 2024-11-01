@@ -14,3 +14,11 @@
   vertical-align: middle;
   display: table-cell;
 }
+.button.active {
+  background-color: #04aa6d;
+  color: white;
+}
+.button.inactive {
+  background-color: white;
+  color: black;
+}

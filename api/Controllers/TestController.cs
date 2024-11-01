@@ -1,5 +1,6 @@
 namespace api.Controllers;
 
+using System.Net.WebSockets;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
