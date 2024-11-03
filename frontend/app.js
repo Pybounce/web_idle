@@ -23,14 +23,34 @@ socket.addEventListener("close", (event) => {
   console.log("web socket closed");
 });
 
-var ws_button = document.getElementById("ws_button");
-ws_button.addEventListener("click", function () {
-  if (ws_button.classList.contains("active")) {
-    ws_button.classList.add("inactive");
-    ws_button.classList.remove("active");
-  } else {
-    ws_button.classList.add("active");
-    ws_button.classList.remove("inactive");
+//-----------------------------------------------------------------------------------------
+
+var resourceNodes = document.getElementsByClassName("resourceNode");
+
+function disableActiveResourceNodes() {
+  //prettier-ignore
+  var activeResourceNodes = document.getElementsByClassName("resourceNode active");
+
+  for (var i = 0; i < activeResourceNodes.length; i++) {
+    socket.send(
+      createStopResourceHarvestMessage(activeResourceNodes[i].dataset.nodeId)
+    );
+    activeResourceNodes[i].classList.add("inactive");
+    activeResourceNodes[i].classList.remove("active");
   }
-  socket.send("Web Socket Ping!");
-});
+}
+
+for (var i = 0; i < resourceNodes.length; i++) {
+  resourceNodes[i].addEventListener("click", function (event) {
+    if (event.target.classList.contains("active")) {
+      disableActiveResourceNodes();
+    } else {
+      disableActiveResourceNodes();
+      event.target.classList.add("active");
+      event.target.classList.remove("inactive");
+      socket.send(
+        createStartResourceHarvestMessage(event.target.dataset.nodeId)
+      );
+    }
+  });
+}

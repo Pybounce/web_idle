@@ -1,4 +1,4 @@
-.button {
+.resourceNode {
   background-color: #04aa6d;
   border: none;
   color: white;
@@ -14,11 +14,11 @@
   vertical-align: middle;
   display: table-cell;
 }
-.button.active {
+.resourceNode.active {
   background-color: #04aa6d;
   color: white;
 }
-.button.inactive {
+.resourceNode.inactive {
   background-color: white;
   color: black;
 }
