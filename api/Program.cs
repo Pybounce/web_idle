@@ -1,5 +1,3 @@
-using System.Net.WebSockets;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +8,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHostedService<TickSystem>();
+builder.Services.AddSingleton<IScopedTickSystem, ScopedTickSystem>();
+builder.Services.AddScoped<IResourceHarvester, ResourceHarvester>();
 builder.Services.AddScoped<IMessageReader, MessageReader>();
 builder.Services.AddScoped<IMessageWriter, MessageWriter>();
 

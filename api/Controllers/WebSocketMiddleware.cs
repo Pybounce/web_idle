@@ -2,17 +2,14 @@
 public class WebSocketMiddleware {
     
     private readonly RequestDelegate _nextRequestDelegate;
-    private readonly IMessageReader _messageReader;
-    private readonly IMessageWriter _messageWriter;
+    private readonly IServiceProvider _serviceProvider;
 
     public WebSocketMiddleware(
         RequestDelegate next, 
-        IMessageReader messageReader, 
-        IMessageWriter messagerWriter
+        IServiceProvider serviceProvider
         ) {
         _nextRequestDelegate = next;
-        _messageReader = messageReader;
-        _messageWriter = messagerWriter;
+        _serviceProvider = serviceProvider;
     }
 
     public async Task InvokeAsync(HttpContext context) {
@@ -20,11 +17,18 @@ public class WebSocketMiddleware {
         {
             if (context.WebSockets.IsWebSocketRequest)
             {
+                using (var scope = _serviceProvider.CreateScope()) {
                 using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                var read = _messageReader.ReadMessages(webSocket);
-                var write = _messageWriter.SendMessages(webSocket);
+
+                var messageReader = scope.ServiceProvider.GetRequiredService<IMessageReader>();
+                var messageWriter = scope.ServiceProvider.GetRequiredService<IMessageWriter>();
+
+                var read = messageReader.ReadMessages(webSocket);
+                var write = messageWriter.SendMessages(webSocket);
 
                 await Task.WhenAll(read, write);
+                }
+
             }
             else
             {

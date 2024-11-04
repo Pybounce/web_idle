@@ -1,6 +1,7 @@
 
 
 using System.Net.WebSockets;
+using System.Reflection.Metadata;
 using System.Text;
 
 public interface IMessageWriter {
@@ -8,6 +9,14 @@ public interface IMessageWriter {
 }
 
 public class MessageWriter: IMessageWriter {
+
+    private readonly IResourceHarvester _resourceHarvester;
+    private const int _writeTickDelay = 1000;
+
+    public MessageWriter(IResourceHarvester resourceHarvester) {
+        _resourceHarvester = resourceHarvester;
+    }
+
     public async Task SendMessages(WebSocket webSocket) {
         
         while (webSocket.State == WebSocketState.Open)
@@ -17,7 +26,7 @@ public class MessageWriter: IMessageWriter {
             await webSocket.SendAsync(
                 new ArraySegment<byte>(message), WebSocketMessageType.Text, true, CancellationToken.None);
 
-            await Task.Delay(5000);
+            await Task.Delay(_writeTickDelay);
         }
     }
 }
