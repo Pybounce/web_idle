@@ -6,7 +6,7 @@ public interface IResourceHarvester {
 }
 
 public class ResourceHarvester: IResourceHarvester {
-    public int? ResourceId { get; set; }
+    private int? _resourceId { get; set; }
     private readonly IScopedTickSystem _scopedTickSystem;
     private readonly IMessageWriter _messageWriter;
     public ResourceHarvester(IScopedTickSystem scopedTickSystem, IMessageWriter messageWriter) {
@@ -17,17 +17,24 @@ public class ResourceHarvester: IResourceHarvester {
 
     public bool TryStartResourceHarvest(int resourceId) {
 
-        this.ResourceId = resourceId;
+        _resourceId = resourceId;
         return true;
     }
     public void StopResourceHarvest(int resourceId) {
 
-        if (ResourceId == resourceId) {
-            ResourceId = null;
+        if (_resourceId == resourceId) {
+            _resourceId = null;
         }
     }
 
     private void OnTick() {
+        if (_resourceId != null) {
+            var message = new ItemCollected {
+                ItemId = 1,
+                Amount = 1
+            };
+            _messageWriter.AddMessage(message);
+        }
         Console.WriteLine("resource harvester on tick");
     }
 }
