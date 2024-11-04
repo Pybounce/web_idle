@@ -8,9 +8,10 @@ public interface IResourceHarvester {
 public class ResourceHarvester: IResourceHarvester {
     public int? ResourceId { get; set; }
     private readonly IScopedTickSystem _scopedTickSystem;
-    public ResourceHarvester(IScopedTickSystem scopedTickSystem) {
-        Console.WriteLine("register");
+    private readonly IMessageWriter _messageWriter;
+    public ResourceHarvester(IScopedTickSystem scopedTickSystem, IMessageWriter messageWriter) {
         _scopedTickSystem = scopedTickSystem;
+        _messageWriter = messageWriter;
         _scopedTickSystem.OnTick += OnTick;
     }
 
@@ -30,5 +31,9 @@ public class ResourceHarvester: IResourceHarvester {
         Console.WriteLine("resource harvester on tick");
     }
 }
+
+
+
+
 
 

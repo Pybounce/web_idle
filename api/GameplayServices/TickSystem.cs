@@ -6,7 +6,6 @@ public class TickSystem : IHostedService, IDisposable
 {
     private readonly IServiceProvider _serviceProvider;
     private Timer? _timer = null;
-    public event Action OnTick;
 
     public TickSystem(IServiceProvider serviceProvider) {
         _serviceProvider = serviceProvider;
@@ -29,7 +28,6 @@ public class TickSystem : IHostedService, IDisposable
             IScopedTickSystem scopedTickSystem = scope.ServiceProvider.GetRequiredService<IScopedTickSystem>();
             scopedTickSystem.Tick();
         }
-        OnTick?.Invoke();
     }
 
     public void Dispose() {

@@ -1,32 +1,38 @@
 
 
+using System.Data.SqlTypes;
 using System.Net.WebSockets;
 using System.Reflection.Metadata;
 using System.Text;
 
 public interface IMessageWriter {
-    public Task SendMessages(WebSocket webSocket);
+    public void InitSocket(WebSocket webSocket);
+    //public bool AddMessage(object data);
 }
 
 public class MessageWriter: IMessageWriter {
 
-    private readonly IResourceHarvester _resourceHarvester;
-    private const int _writeTickDelay = 1000;
-
-    public MessageWriter(IResourceHarvester resourceHarvester) {
-        _resourceHarvester = resourceHarvester;
+    //  make a buffer of messages
+    private WebSocket _webSocket = null;
+    
+    public MessageWriter(IScopedTickSystem scopedTickSystem) {
+        scopedTickSystem.OnTick += SendMessages;
     }
 
-    public async Task SendMessages(WebSocket webSocket) {
-        
-        while (webSocket.State == WebSocketState.Open)
-        {
-            Console.WriteLine("sending!");
-            var message = Encoding.UTF8.GetBytes("Message from the server! :D");
-            await webSocket.SendAsync(
-                new ArraySegment<byte>(message), WebSocketMessageType.Text, true, CancellationToken.None);
+    public void InitSocket(WebSocket webSocket) {
+        _webSocket = webSocket;
+    }
 
-            await Task.Delay(_writeTickDelay);
+    private async void SendMessages() {
+        if (_webSocket != null && _webSocket.State == WebSocketState.Open) {
+            var message = Encoding.UTF8.GetBytes("Message from the server! :D");
+            await _webSocket.SendAsync(
+                new ArraySegment<byte>(message), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+        else {
+            _webSocket = null;
         }
     }
+
 }
+

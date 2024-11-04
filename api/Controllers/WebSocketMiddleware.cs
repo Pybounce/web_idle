@@ -18,15 +18,13 @@ public class WebSocketMiddleware {
             if (context.WebSockets.IsWebSocketRequest)
             {
                 using (var scope = _serviceProvider.CreateScope()) {
-                using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-
-                var messageReader = scope.ServiceProvider.GetRequiredService<IMessageReader>();
-                var messageWriter = scope.ServiceProvider.GetRequiredService<IMessageWriter>();
-
-                var read = messageReader.ReadMessages(webSocket);
-                var write = messageWriter.SendMessages(webSocket);
-
-                await Task.WhenAll(read, write);
+                    using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+    
+                    var messageReader = scope.ServiceProvider.GetRequiredService<IMessageReader>();
+                    var messageWriter = scope.ServiceProvider.GetRequiredService<IMessageWriter>();
+    
+                    messageWriter.InitSocket(webSocket);
+                    await messageReader.ReadMessages(webSocket);
                 }
 
             }
