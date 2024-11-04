@@ -46,11 +46,11 @@ public class MessageReader: IMessageReader {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
         switch(message.MessageType) {
-            case MessageTypes.StartResourceHarvest:
+            case ReadMessageTypes.StartResourceHarvest:
                 var startResourceHarvestMessage = JsonSerializer.Deserialize<StartResourceHarvest>(message.Data.GetRawText(), options);
                 _playerActionManager.TryStartResourceHarvest(startResourceHarvestMessage.ResourceId);
                 break;
-            case MessageTypes.StopResourceHarvest:
+            case ReadMessageTypes.StopResourceHarvest:
                 var stopResourceHarvestMessage = JsonSerializer.Deserialize<StopResourceHarvest>(message.Data.GetRawText(), options);
                 _playerActionManager.StopResourceHarvest(stopResourceHarvestMessage.ResourceId);
                 break;

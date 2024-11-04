@@ -15,13 +15,6 @@ const socket = new WebSocket("ws://localhost:5042/ws");
 socket.addEventListener("open", (event) => {
   socket.send("Hello World!");
 });
-socket.onmessage = (event) => {
-  console.log("ws message from server: ", event.data);
-};
-
-socket.addEventListener("close", (event) => {
-  console.log("web socket closed");
-});
 
 //-----------------------------------------------------------------------------------------
 

@@ -29,10 +29,7 @@ public class ResourceHarvester: IResourceHarvester {
 
     private void OnTick() {
         if (_resourceId != null) {
-            var message = new ItemCollected {
-                ItemId = _resourceId.Value,
-                Amount = 1
-            };
+            var message = new ItemCollected(_resourceId.Value, 1);
             _messageWriter.AddMessage(message);
         }
     }
