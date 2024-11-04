@@ -1,17 +1,17 @@
-function createStartResourceHarvestMessage(resourceNodeId) {
+function createStartResourceHarvestMessage(resourceId) {
   return JSON.stringify({
     messageType: "StartResourceHarvest",
     data: {
-      resourceNodeId: resourceNodeId,
+      resourceId: Number(resourceId),
     },
   });
 }
 
-function createStopResourceHarvestMessage(resourceNodeId) {
+function createStopResourceHarvestMessage(resourceId) {
   return JSON.stringify({
     messageType: "StopResourceHarvest",
     data: {
-      resourceNodeId: resourceNodeId,
+      resourceId: Number(resourceId),
     },
   });
 }

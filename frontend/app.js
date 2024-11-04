@@ -33,7 +33,9 @@ function disableActiveResourceNodes() {
 
   for (var i = 0; i < activeResourceNodes.length; i++) {
     socket.send(
-      createStopResourceHarvestMessage(activeResourceNodes[i].dataset.nodeId)
+      createStopResourceHarvestMessage(
+        activeResourceNodes[i].dataset.resourceId
+      )
     );
     activeResourceNodes[i].classList.add("inactive");
     activeResourceNodes[i].classList.remove("active");
@@ -49,7 +51,7 @@ for (var i = 0; i < resourceNodes.length; i++) {
       event.target.classList.add("active");
       event.target.classList.remove("inactive");
       socket.send(
-        createStartResourceHarvestMessage(event.target.dataset.nodeId)
+        createStartResourceHarvestMessage(event.target.dataset.resourceId)
       );
     }
   });

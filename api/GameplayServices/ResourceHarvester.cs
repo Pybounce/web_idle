@@ -16,7 +16,7 @@ public class ResourceHarvester: IResourceHarvester {
     }
 
     public bool TryStartResourceHarvest(int resourceId) {
-
+        Console.WriteLine("RESOURCE ID: " + resourceId);
         _resourceId = resourceId;
         return true;
     }
@@ -30,12 +30,11 @@ public class ResourceHarvester: IResourceHarvester {
     private void OnTick() {
         if (_resourceId != null) {
             var message = new ItemCollected {
-                ItemId = 1,
+                ItemId = _resourceId.Value,
                 Amount = 1
             };
             _messageWriter.AddMessage(message);
         }
-        Console.WriteLine("resource harvester on tick");
     }
 }
 

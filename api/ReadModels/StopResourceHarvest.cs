@@ -1,3 +1,3 @@
 public struct StopResourceHarvest {
-    public int ResourceId { get; private set; }
+    public int ResourceId { get; set; }
 }

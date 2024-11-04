@@ -26,9 +26,6 @@ public class MessageReader: IMessageReader {
                 receiveResult = await webSocket.ReceiveAsync(
                     new ArraySegment<byte>(buffer), CancellationToken.None);
                 string jsonStr = Encoding.UTF8.GetString(buffer, 0, receiveResult.Count);
-                Console.WriteLine("________________________");
-                Console.WriteLine("");
-                Console.WriteLine("Message recieved");
                 HandleMessage(jsonStr);
             }
 
@@ -44,16 +41,18 @@ public class MessageReader: IMessageReader {
 
     private void HandleMessage(string messageJson) {
         var message = MessageFromJson(messageJson);
+        Console.WriteLine("MESSAGE: " + messageJson);
+        var options = new JsonSerializerOptions {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
         switch(message.MessageType) {
             case MessageTypes.StartResourceHarvest:
-                //var startResourceHarvestMessage = (StartResourceHarvest)message.Data;
-                //_playerActionManager.TryStartResourceHarvest(startResourceHarvestMessage.ResourceId);
-                Console.WriteLine("Start resource harvest");
+                var startResourceHarvestMessage = JsonSerializer.Deserialize<StartResourceHarvest>(message.Data.GetRawText(), options);
+                _playerActionManager.TryStartResourceHarvest(startResourceHarvestMessage.ResourceId);
                 break;
             case MessageTypes.StopResourceHarvest:
-                //var stopResourceHarvestMessage = (StopResourceHarvest)message.Data;
-                //_playerActionManager.StopResourceHarvest(stopResourceHarvestMessage.ResourceId);
-                Console.WriteLine("End resource harvest");
+                var stopResourceHarvestMessage = JsonSerializer.Deserialize<StopResourceHarvest>(message.Data.GetRawText(), options);
+                _playerActionManager.StopResourceHarvest(stopResourceHarvestMessage.ResourceId);
                 break;
             default:
                 Console.WriteLine("you fucked up.");
