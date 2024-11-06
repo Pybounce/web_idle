@@ -22,13 +22,11 @@ public class ResourceHarvester: IResourceHarvester, IDisposable {
     }
 
     public bool TryStartResourceHarvest(int resourceId) {
-        Console.WriteLine("RESOURCE ID: " + resourceId);
         _resourceId = resourceId;
         return true;
     }
 
     public void StopResourceHarvest(int resourceId) {
-
         if (_resourceId == resourceId) {
             _resourceId = null;
         }
@@ -36,8 +34,6 @@ public class ResourceHarvester: IResourceHarvester, IDisposable {
 
     private void OnTick() {
         Console.WriteLine("harvester ontick");
-        Console.WriteLine("_resourceId: " + _resourceId);
-
         if (_resourceId != null) {
             var message = new ItemCollected(_resourceId.Value, 1);
             _messageWriter.AddMessage(message);
