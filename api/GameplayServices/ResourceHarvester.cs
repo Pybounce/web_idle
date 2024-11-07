@@ -10,6 +10,7 @@ public class ResourceHarvester: IResourceHarvester, IDisposable {
     private readonly IMessageWriter _messageWriter;
     private readonly IEventHub _eventHub;
     private readonly IScopedTickSystem _scopedTickSystem;
+    
     public ResourceHarvester(
         IScopedTickSystem scopedTickSystem, 
         IMessageWriter messageWriter, 
@@ -19,6 +20,9 @@ public class ResourceHarvester: IResourceHarvester, IDisposable {
         _eventHub = eventHub;
         _scopedTickSystem = scopedTickSystem;
         _scopedTickSystem.OnTick += OnTick;
+
+        _eventHub.Subscribe<ItemCollectedEvent>(Subbed);
+        _eventHub.Subscribe<ItemCollectedEvent>(Subbed2);
     }
 
     public bool TryStartResourceHarvest(int resourceId) {
@@ -33,15 +37,26 @@ public class ResourceHarvester: IResourceHarvester, IDisposable {
     }
 
     private void OnTick() {
-        Console.WriteLine("harvester ontick");
+        //Console.WriteLine("harvester ontick");
         if (_resourceId != null) {
-            var message = new ItemCollected(_resourceId.Value, 1);
-            _messageWriter.AddMessage(message);
+            _eventHub.Publish(new ItemCollectedEvent(_resourceId.Value, 1));
+
+            //var message = new ItemCollected(_resourceId.Value, 1);
+            //_messageWriter.AddMessage(message);
         }
     }
 
     public void Dispose() {
         _scopedTickSystem.OnTick -= OnTick;
+        _eventHub.Unsubscribe<ItemCollectedEvent>(Subbed);
+        _eventHub.Unsubscribe<ItemCollectedEvent>(Subbed2);
+    }
+
+    private void Subbed(ItemCollectedEvent e) {
+        Console.WriteLine("item collected event sub");
+    }
+    private void Subbed2(ItemCollectedEvent e) {
+        Console.WriteLine("item collected event sub2");
     }
 
 }

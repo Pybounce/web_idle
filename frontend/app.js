@@ -16,6 +16,11 @@ socket.addEventListener("open", (event) => {
   socket.send("Hello World!");
 });
 
+var close_socket_btn = document.getElementById("close_socket_button");
+close_socket_btn.addEventListener("click", function () {
+  socket.close();
+});
+
 //-----------------------------------------------------------------------------------------
 
 var resourceNodes = document.getElementsByClassName("resourceNode");

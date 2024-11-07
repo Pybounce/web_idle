@@ -11,17 +11,20 @@ public interface IMessageWriter {
     public void AddMessage(object data);
 }
 
-public class MessageWriter: IMessageWriter {
+public class MessageWriter: IMessageWriter, IDisposable {
 
     private List<byte[]> _messageBuffer;
     private readonly SemaphoreSlim _sendSemaphore;
     private WebSocket _webSocket;
+    private readonly IEventHub _eventHub;
     
-    public MessageWriter(IScopedTickSystem scopedTickSystem) {
+    public MessageWriter(IScopedTickSystem scopedTickSystem, IEventHub eventHub) {
         scopedTickSystem.OnTick += SendMessages;
         _messageBuffer = new List<byte[]>();
         _sendSemaphore = new SemaphoreSlim(1, 1);
         _webSocket = null;
+        _eventHub = eventHub;
+        _eventHub.Subscribe<ItemCollectedEvent>(DoSomething);
     }
 
     public void InitSocket(WebSocket webSocket) {
@@ -53,6 +56,15 @@ public class MessageWriter: IMessageWriter {
 
     private async Task SendMessageAtIndex(int index) {
         await _webSocket.SendAsync(new ArraySegment<byte>(_messageBuffer[index]), WebSocketMessageType.Text, true, CancellationToken.None);
+    }
+
+    private void DoSomething(ItemCollectedEvent itemCollectedEvent) {
+        Console.WriteLine("wapow reading event");
+        _eventHub.Unsubscribe<ItemCollectedEvent>(DoSomething);
+    }
+
+    public void Dispose() {
+        _eventHub.Unsubscribe<ItemCollectedEvent>(DoSomething);
     }
 
 }

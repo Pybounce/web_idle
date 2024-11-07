@@ -1,32 +1,50 @@
 
 
+
 public interface IEventHub {
-    public void Add<T>(T e) where T : IEvent;
+    public void Publish<T>(T e);
+    public void Subscribe<T>(Action<T> handler);
+    public void Unsubscribe<T>(Action<T> handler);
 }
 
 public class EventHub: IEventHub, IDisposable {
 
-    private List<IEvent> _events;
-    private readonly IMessageWriter _messageWriter;
-    private readonly IScopedTickSystem _tickSystem;
-    public EventHub(IScopedTickSystem tickSystem, IMessageWriter messageWriter) {
-        _events = new List<IEvent>();
-        _messageWriter = messageWriter;
-        _tickSystem = tickSystem;
-        _tickSystem.OnTick += OnTick;
+    private readonly Dictionary<Type, Delegate?> _subscribers;
+    
+    public EventHub() {
+        _subscribers = new Dictionary<Type, Delegate?>();
     }
 
-
-    public void Add<T>(T e) where T : IEvent {
-        _events.Add(e);
+    public void Publish<T>(T e) {
+        if (_subscribers.TryGetValue(typeof(T), out Delegate? d)) {
+            if (d == null) { return; }
+            var action = d as Action<T>;
+            action?.Invoke(e);
+        }
     }
 
-    private void OnTick() {
-        Console.WriteLine("event hub tick");
+    public void Subscribe<T>(Action<T> handler) {
+        Delegate newDelegate = (T e) => {};
+        if (!_subscribers.ContainsKey(typeof(T))) {
+            _subscribers.Add(typeof(T), newDelegate);
+        }
+        if (_subscribers.TryGetValue(typeof(T), out Delegate? d)) {
+            if (d == null) {
+                d = newDelegate;
+            }
+            _subscribers[typeof(T)] = Delegate.Combine(d, handler);
+        }
+    }
+
+    public void Unsubscribe<T>(Action<T> handler) {
+        if (_subscribers.TryGetValue(typeof(T), out Delegate? d)) {
+            if (d == null) { return; }
+            _subscribers[typeof(T)] = Delegate.Remove(d, handler);
+        }
     }
 
     public void Dispose() {
-        _tickSystem.OnTick -= OnTick;
+        _subscribers.Clear();
     }
 
 }
