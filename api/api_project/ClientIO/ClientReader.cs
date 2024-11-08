@@ -3,15 +3,15 @@ using System.Text;
 using System.Text.Json;
 
 
-public interface IMessageReader {
+public interface IClientReader {
     public Task ReadMessages(WebSocket webSocket);
 }
 
-public class MessageReader: IMessageReader {
+public class ClientReader: IClientReader {
 
     private readonly IResourceHarvester _playerActionManager;
 
-    public MessageReader(IResourceHarvester playerActionManager) {
+    public ClientReader(IResourceHarvester playerActionManager) {
         _playerActionManager = playerActionManager;
     }
 

@@ -3,18 +3,18 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 
-public interface IMessageWriter {
+public interface IClientWriter {
     public void InitSocket(WebSocket webSocket);
 }
 
-public class MessageWriter: IMessageWriter, IDisposable {
+public class ClientWriter: IClientWriter, IDisposable {
 
     private List<byte[]> _messageBuffer;
     private readonly SlimShady _slimShady;
     private WebSocket? _webSocket;
     private readonly IEventHub _eventHub;
     
-    public MessageWriter(IScopedTickSystem scopedTickSystem, IEventHub eventHub) {
+    public ClientWriter(IScopedTickSystem scopedTickSystem, IEventHub eventHub) {
         scopedTickSystem.OnTick += SendMessages;
         _messageBuffer = new List<byte[]>();
         _slimShady = new SlimShady();

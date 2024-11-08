@@ -19,8 +19,8 @@ public class WebSocketMiddleware {
             {
                 using (var scope = _serviceProvider.CreateScope()) {
                     using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                    var messageReader = scope.ServiceProvider.GetRequiredService<IMessageReader>();
-                    var messageWriter = scope.ServiceProvider.GetRequiredService<IMessageWriter>();
+                    var messageReader = scope.ServiceProvider.GetRequiredService<IClientReader>();
+                    var messageWriter = scope.ServiceProvider.GetRequiredService<IClientWriter>();
 
                     messageWriter.InitSocket(webSocket);
                     await messageReader.ReadMessages(webSocket);

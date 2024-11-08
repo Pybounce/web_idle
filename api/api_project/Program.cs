@@ -12,8 +12,8 @@ builder.Services.AddHostedService<TickSystem>();
 builder.Services.AddSingleton<IScopedTickSystem, ScopedTickSystem>();
 builder.Services.AddScoped<IEventHub, EventHub>();
 builder.Services.AddScoped<IResourceHarvester, ResourceHarvester>();
-builder.Services.AddScoped<IMessageReader, MessageReader>();
-builder.Services.AddScoped<IMessageWriter, MessageWriter>();
+builder.Services.AddScoped<IClientReader, ClientReader>();
+builder.Services.AddScoped<IClientWriter, ClientWriter>();
 
 var app = builder.Build();
 
