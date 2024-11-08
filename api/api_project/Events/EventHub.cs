@@ -24,27 +24,30 @@ public class EventHub: IEventHub, IDisposable {
     }
 
     public void Subscribe<T>(Action<T> handler) {
-        Delegate newDelegate = (T e) => {};
-        if (!_subscribers.ContainsKey(typeof(T))) {
-            _subscribers.Add(typeof(T), newDelegate);
-        }
-        if (_subscribers.TryGetValue(typeof(T), out Delegate? d)) {
-            if (d == null) {
-                d = newDelegate;
+        lock (_subscribers) {
+            Delegate newDelegate = (T e) => {};
+            if (!_subscribers.ContainsKey(typeof(T))) {
+                _subscribers.Add(typeof(T), newDelegate);
             }
-            _subscribers[typeof(T)] = Delegate.Combine(d, handler);
+            if (_subscribers.TryGetValue(typeof(T), out Delegate? d)) {
+                if (d == null) {
+                    d = newDelegate;
+                }
+                _subscribers[typeof(T)] = Delegate.Combine(d, handler);
+            }
         }
     }
 
     public void Unsubscribe<T>(Action<T> handler) {
-        if (_subscribers.TryGetValue(typeof(T), out Delegate? d)) {
-            if (d == null) { return; }
-            _subscribers[typeof(T)] = Delegate.Remove(d, handler);
+        lock (_subscribers) {
+            if (_subscribers.TryGetValue(typeof(T), out Delegate? d)) {
+                if (d == null) { return; }
+                _subscribers[typeof(T)] = Delegate.Remove(d, handler);
+            }
         }
     }
 
     public void Dispose() {
         _subscribers.Clear();
     }
-
 }
