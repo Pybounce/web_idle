@@ -23,12 +23,11 @@ public class EventHubTests {
 
     [TearDown]
     public void TearDown() {
-
+        _eventHub.Dispose();
     } 
     
     [Test]
     public void Publishing_To_One_Subscriber___One_Subscriber_Invoked() {
-
         var mockHandler = new Mock<Action<SomeType>>();
         var someInt = 1;
         _eventHub.Subscribe<SomeType>(mockHandler.Object);
@@ -40,7 +39,6 @@ public class EventHubTests {
 
     [Test]
     public void Publishing_To_Many_Subscribers_Same_Type___Many_Subscribers_Invoked() {
-                
         var mockHandler = new Mock<Action<SomeType>>();
         var someInt = 1;
         _eventHub.Subscribe<SomeType>(mockHandler.Object);
@@ -53,7 +51,6 @@ public class EventHubTests {
 
     [Test]
     public void Publishing_To_Many_Subscribers_Different_Type___Only_Same_Type_Subscribers_Invoked() {
-        
         var someMockHandler = new Mock<Action<SomeType>>();
         var someOtherMockHandler = new Mock<Action<SomeOtherType>>();
         var someInt = 1;
@@ -68,7 +65,6 @@ public class EventHubTests {
 
     [Test]
     public void Publishing_To_Zero_Subscribers___No_Exceptions_Thrown() {
-        
         var someInt = 1;
 
         _eventHub.Publish<SomeType>(new SomeType { SomeInt = someInt });
@@ -87,9 +83,7 @@ public class EventHubTests {
 
         _eventHub.Publish<SomeType>(new SomeType { SomeInt = someInt });
 
-
         someMockHandler.Verify(h => h(It.Is<SomeType>(st => st.SomeInt == someInt)), Times.Exactly(threadCount));
-
     }
 
 }
