@@ -11,14 +11,14 @@ public interface IMessageWriter {
 public class MessageWriter: IMessageWriter, IDisposable {
 
     private List<byte[]> _messageBuffer;
-    private readonly SemaphoreSlim _sendSemaphore;
+    private readonly SlimShady _slimShady;
     private WebSocket? _webSocket;
     private readonly IEventHub _eventHub;
     
     public MessageWriter(IScopedTickSystem scopedTickSystem, IEventHub eventHub) {
         scopedTickSystem.OnTick += SendMessages;
         _messageBuffer = new List<byte[]>();
-        _sendSemaphore = new SemaphoreSlim(1, 1);
+        _slimShady = new SlimShady();
         _webSocket = null;
         _eventHub = eventHub;
         _eventHub.Subscribe<ItemCollectedEvent>(DoSomething);
@@ -35,16 +35,12 @@ public class MessageWriter: IMessageWriter, IDisposable {
 
     private async void SendMessages() {
         if (_webSocket != null && _webSocket.State == WebSocketState.Open) {
-            await _sendSemaphore.WaitAsync();
-            try {
+            await _slimShady.LockAsync(async () => {
                 for (int i = _messageBuffer.Count - 1; i >= 0; i--) {
                     await _webSocket!.SendAsync(new ArraySegment<byte>(_messageBuffer[i]), WebSocketMessageType.Text, true, CancellationToken.None);
                     _messageBuffer.RemoveAt(i);
-                }
-            }
-            finally {
-                _sendSemaphore.Release();
-            }
+                }            
+            });
         }
         else {
             _webSocket = null;
