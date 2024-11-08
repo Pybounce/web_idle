@@ -76,4 +76,20 @@ public class EventHubTests {
         Assert.Pass("No exceptions were thrown");
     }
 
+    [Test]
+    public void Subscribing_On_Multiple_Threads___All_Subscribers_Successfully_Added() {
+        int someInt = 3;
+        int threadCount = 1000;
+        var someMockHandler = new Mock<Action<SomeType>>();
+        Parallel.For(0, threadCount, (i) => {
+            _eventHub.Subscribe<SomeType>(someMockHandler.Object);
+        });
+
+        _eventHub.Publish<SomeType>(new SomeType { SomeInt = someInt });
+
+
+        someMockHandler.Verify(h => h(It.Is<SomeType>(st => st.SomeInt == someInt)), Times.Exactly(threadCount));
+
+    }
+
 }
