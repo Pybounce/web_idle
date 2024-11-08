@@ -1,8 +1,5 @@
 
-
-using System.Data.SqlTypes;
 using System.Net.WebSockets;
-using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Json;
 
@@ -41,7 +38,7 @@ public class MessageWriter: IMessageWriter, IDisposable {
             await _sendSemaphore.WaitAsync();
             try {
                 for (int i = _messageBuffer.Count - 1; i >= 0; i--) {
-                    await SendMessageAtIndex(i);
+                    await _webSocket!.SendAsync(new ArraySegment<byte>(_messageBuffer[i]), WebSocketMessageType.Text, true, CancellationToken.None);
                     _messageBuffer.RemoveAt(i);
                 }
             }
@@ -52,10 +49,6 @@ public class MessageWriter: IMessageWriter, IDisposable {
         else {
             _webSocket = null;
         }
-    }
-
-    private async Task SendMessageAtIndex(int index) {
-        await _webSocket!.SendAsync(new ArraySegment<byte>(_messageBuffer[index]), WebSocketMessageType.Text, true, CancellationToken.None);
     }
 
     private void DoSomething(ItemCollectedEvent itemCollectedEvent) {
