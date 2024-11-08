@@ -5,7 +5,6 @@ using System.Text.Json;
 
 public interface IMessageWriter {
     public void InitSocket(WebSocket webSocket);
-    public void AddMessage(object data);
 }
 
 public class MessageWriter: IMessageWriter, IDisposable {
@@ -21,16 +20,11 @@ public class MessageWriter: IMessageWriter, IDisposable {
         _slimShady = new SlimShady();
         _webSocket = null;
         _eventHub = eventHub;
-        _eventHub.Subscribe<ItemCollectedEvent>(DoSomething);
+        _eventHub.Subscribe<ItemCollectedEvent>(WriteItemCollectedEvents);
     }
 
     public void InitSocket(WebSocket webSocket) {
         _webSocket = webSocket;
-    }
-
-    public void AddMessage(object data) {
-        var jsonString = JsonSerializer.Serialize(data);
-        _messageBuffer.Add(Encoding.UTF8.GetBytes(jsonString));
     }
 
     private async void SendMessages() {
@@ -47,13 +41,17 @@ public class MessageWriter: IMessageWriter, IDisposable {
         }
     }
 
-    private void DoSomething(ItemCollectedEvent itemCollectedEvent) {
-        Console.WriteLine("wapow reading event");
-        _eventHub.Unsubscribe<ItemCollectedEvent>(DoSomething);
+    public void Dispose() {
+        _eventHub.Unsubscribe<ItemCollectedEvent>(WriteItemCollectedEvents);
     }
 
-    public void Dispose() {
-        _eventHub.Unsubscribe<ItemCollectedEvent>(DoSomething);
+    private void AddMessage(object data) {
+        var jsonString = JsonSerializer.Serialize(data);
+        _messageBuffer.Add(Encoding.UTF8.GetBytes(jsonString));
+    }
+
+    private void WriteItemCollectedEvents(ItemCollectedEvent e) {
+        AddMessage(new ItemCollected(e.ItemId, e.Amount));
     }
 
 }
