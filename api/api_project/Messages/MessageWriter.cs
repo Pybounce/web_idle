@@ -15,7 +15,7 @@ public class MessageWriter: IMessageWriter, IDisposable {
 
     private List<byte[]> _messageBuffer;
     private readonly SemaphoreSlim _sendSemaphore;
-    private WebSocket _webSocket;
+    private WebSocket? _webSocket;
     private readonly IEventHub _eventHub;
     
     public MessageWriter(IScopedTickSystem scopedTickSystem, IEventHub eventHub) {
@@ -55,7 +55,7 @@ public class MessageWriter: IMessageWriter, IDisposable {
     }
 
     private async Task SendMessageAtIndex(int index) {
-        await _webSocket.SendAsync(new ArraySegment<byte>(_messageBuffer[index]), WebSocketMessageType.Text, true, CancellationToken.None);
+        await _webSocket!.SendAsync(new ArraySegment<byte>(_messageBuffer[index]), WebSocketMessageType.Text, true, CancellationToken.None);
     }
 
     private void DoSomething(ItemCollectedEvent itemCollectedEvent) {
