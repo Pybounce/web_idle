@@ -3,13 +3,22 @@
 #### Needs to store:
 
     - Player data:
-        - Current level
-        - Individual skill levels
+        - Name
+        - Hashed password
+        - Individual skill xp (levels can be calculated through code):
+            - skillId
+            - xp
         - Inventory
         - Name (details in general)
     - Static data: (config)
-        - Resource level requirements (or just generic requirements)
-        - Resource Info (itemId, item recipe, amount, name?, time)
+        - Resource Node Info:
+            - resourceNodeId
+            - skillId
+            - ingredients
+            - drop table (List<itemId, chance>) -> chances all run one after another so can get multiple low chances in one go
+            - name?
+            - duration
+            - requirements (xp or other reqs?)
 
 #### Code Architecture
 
