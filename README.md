@@ -20,10 +20,23 @@
             - duration
             - requirements (xp or other reqs?)
 
-#### Code Architecture
+#### Db Code Architecture
 
     - DbWriter and DbReader
     - Writer will have access to Reader, Reader won't have access to Writer
+
+### Code Architecture
+
+#### Systems
+
+    - Systems that store the cached info
+    - PlayerLevelSystem could store all the player xp values for each skill
+    - UserSystem could contain info on passtoken etc
+    - These systems can subscribe to events (PlayerLevelSystem could subscribe to XpGain event etc)
+    - PlayerLevelSystem can raise events for things like LevelUp(skillId, level)
+    - ResourceDbSystem can hold cached resource node info (and likely be a singleton system)
+    - Do I make the UserSystem be UserDb and PlayerLevelSystem be PlayerLevelDb, and then have them send write requests?
+        - Since if the PLSystem reads XpGain events and increases it's cached value, then the db also reads this event and saves the new value, it's being calculated in 2 separate places
 
 ### Fixes?
 
