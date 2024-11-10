@@ -37,6 +37,55 @@
     - ResourceDbSystem can hold cached resource node info (and likely be a singleton system)
     - Do I make the UserSystem be UserDb and PlayerLevelSystem be PlayerLevelDb, and then have them send write requests?
         - Since if the PLSystem reads XpGain events and increases it's cached value, then the db also reads this event and saves the new value, it's being calculated in 2 separate places
+        - This makes more sense, then the dbReader/Writer are just generic db wrapper
+        - The individualDb systems (Player/User etc), will keep track if they need to be saved
+        - QUERY: Do these systems just raise events instead of connecting directly to dbreadwrite?
+            - Or does dbwrite just read the events on things like xpGained
+    - How split should the systems be?
+        - Should there be an xp system that tracks all the players xp, and reads events such as GatheredResource(resourceId)
+        - Then this system will work out the amount of xp and raise an event GainedXp(skillId, amount)
+        - Then another system (LootSystem) will take the GatheredResource(resourceId) event, work out what drops it gives, and raise those events
+        - Might need to be called something other than GatheredResource, since you're really just completing a resourceNode? kinda?
+
+    - Okay so some updated thoughts
+    - Could have SaveSystem, XpSystem, InventorySystem, LootSystem, DbReader/Writer etc
+    - Now the SaveSystem contains the Xp and Inventory systems etc and will extract the changed data
+        - This way the entire state can be saved in one transaction
+    - ISSUE: Splitting these systems up a lot leads to different data being needed all over.
+        - For example if we raise a ResourceComplete event.
+        - The XpSystem will work out how much xp should be given and raise XpGained event
+        - The loot system will work out what items should be given and raise ItemGained events
+        - Some other system will work out what items should be removed, if recipe contained any
+            - This would mean the xpsystem needs to know the xp for each item
+            - Loot system needs to know the loot table for each resource
+            - Some other system will need to know recipe.
+        - If these are stored in SQL, they could each be separate rows/tables
+            - ItemXp table
+            - ResourceLoot table
+            - ItemRecipe table
+        - So how will these systems get the segmented data
+            - On the query, it would make sense to use joins to get all this info for each item
+            - However, since I will need all this info for each item, it may make sense to use NoSQL
+        - POSSIBLE SOLUTION:
+            - Have a system for dbState
+            - This system will contain all data that goes to and from the db
+            - Other systems (xpSystem, InventorySystem etc) will read from this system as if it were the db
+            - Those other systems can also write to this system.
+            - This dbState system will, every now and then, save back to the db
+
+### Saving issue
+
+    - Each system being responsible for saving it's own data could cause inconsistent data
+        - For example if one system successfully saves and another doesn't
+        - Player may end up with recipe resources gone but no resource gained etc
+    - Possible solution to have a SaveSystem, that takes in save events, aggregates them, and saves in one transaction
+
+### DbState Solution
+
+    - System named DbStateSys
+    - This system contains the data that is written and read from the db
+    - In order to update the db, other services should mutate data in DbStateSys
+    - This system will then periodically backup to the db
 
 ### Fixes?
 
