@@ -14,6 +14,7 @@ builder.Services.AddScoped<IEventHub, EventHub>();
 builder.Services.AddScoped<IResourceHarvester, ResourceHarvester>();
 builder.Services.AddScoped<IClientReader, ClientReader>();
 builder.Services.AddScoped<IClientWriter, ClientWriter>();
+builder.Services.AddScoped<ISaveSystem, SaveSystem>();
 
 var app = builder.Build();
 
