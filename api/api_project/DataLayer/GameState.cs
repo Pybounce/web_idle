@@ -1,3 +1,3 @@
 public struct GameState {
-    public Dictionary<int, int> PlayerInventory { get; set; }
+    public Inventory PlayerInventory { get; set; }
 }
