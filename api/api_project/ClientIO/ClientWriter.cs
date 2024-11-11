@@ -20,7 +20,8 @@ public class ClientWriter: IClientWriter, IDisposable {
         _slimShady = new SlimShady();
         _webSocket = null;
         _eventHub = eventHub;
-        _eventHub.Subscribe<ItemGained>(WriteItemCollectedEvents);
+        _eventHub.Subscribe<ItemGained>(WriteItemCollectedEvent);
+        _eventHub.Subscribe<XpGainedEvent>(WriteXpGainedEvent);
     }
 
     public void InitSocket(WebSocket webSocket) {
@@ -42,7 +43,8 @@ public class ClientWriter: IClientWriter, IDisposable {
     }
 
     public void Dispose() {
-        _eventHub.Unsubscribe<ItemGained>(WriteItemCollectedEvents);
+        _eventHub.Unsubscribe<ItemGained>(WriteItemCollectedEvent);
+        _eventHub.Unsubscribe<XpGainedEvent>(WriteXpGainedEvent);
     }
 
     private void AddMessage(object data) {
@@ -50,8 +52,11 @@ public class ClientWriter: IClientWriter, IDisposable {
         _messageBuffer.Add(Encoding.UTF8.GetBytes(jsonString));
     }
 
-    private void WriteItemCollectedEvents(ItemGained e) {
+    private void WriteItemCollectedEvent(ItemGained e) {
         AddMessage(new ItemCollected(e.ItemId, e.Amount));
+    }
+    private void WriteXpGainedEvent(XpGainedEvent e) {
+        AddMessage(new XpGained(e.SkillId, e.Amount));
     }
 
 }

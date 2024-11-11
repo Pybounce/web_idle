@@ -14,7 +14,7 @@ public class XpSystem: IXpSystem {
     }
 
     private void OnResourceHarvestComplete(ResourceHarvestComplete e) {
-        _eventHub.Publish<XpGained>(new XpGained(e.ResourceId, 1));
+        _eventHub.Publish<XpGainedEvent>(new XpGainedEvent(e.ResourceId, 1));
     }
 
     public void Dispose() {

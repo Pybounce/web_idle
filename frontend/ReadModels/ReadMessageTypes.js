@@ -1,3 +1,3 @@
 const ReadMessageTypes = {
-  ItemCollected: "ItemCollected",
+  ItemGained: "ItemGained",
 };

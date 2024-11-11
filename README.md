@@ -122,3 +122,7 @@
             + Web server acts as a caching layer and handles all the truth
             - If webserver crashes, progress is lost (though only since last save)
             - This will only work with requests on the websocket (but I might as well make every request on the websocket now)
+
+### Enchancements
+
+    - Make messages contain the current amount so it's self correcting over time

@@ -2,7 +2,7 @@
 
 public struct ItemCollected {
     public ItemCollected(int itemId, int amount) {
-        MessageType = WriteMessageTypes.ItemCollected;
+        MessageType = WriteMessageTypes.ItemGained;
         ItemId = itemId;
         Amount = amount;
     }

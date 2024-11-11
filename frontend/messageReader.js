@@ -10,7 +10,7 @@ socket.addEventListener("close", (event) => {
 function handleMessage(message) {
   console.log("message " + message.MessageType);
   switch (message.MessageType) {
-    case ReadMessageTypes.ItemCollected:
+    case ReadMessageTypes.ItemGained:
       inventory.addItem(message.ItemId, message.Amount);
       inventory.log();
       break;
