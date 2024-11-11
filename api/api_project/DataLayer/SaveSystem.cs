@@ -4,7 +4,7 @@ public interface ISaveSystem {
 
 }
 
-public class SaveSystem: ISaveSystem {
+public class SaveSystem: ISaveSystem, IDisposable {
     private IScopedTickSystem _tickSystem;
     /// <summary>
     /// Amount of ticks between saves to the db
@@ -14,7 +14,19 @@ public class SaveSystem: ISaveSystem {
 
     public SaveSystem(IScopedTickSystem tickSystem) {
         _tickSystem = tickSystem;
+        _tickSystem.OnTick += OnTick;
         _gameState = new GameState();   //Load state from db here
+    }
+
+
+
+
+    public void OnTick() {
+        //save every x ticks using modulo
+    }
+
+    public void Dispose() {
+        _tickSystem.OnTick -= OnTick;
     }
 }
 

@@ -86,6 +86,22 @@
     - This system contains the data that is written and read from the db
     - In order to update the db, other services should mutate data in DbStateSys
     - This system will then periodically backup to the db
+    - QUERY: How will analytics get the updates?
+        - Given the systems just update the cached data directly, there's no way for analytics to consume it.
+        - I could raise events for GainXp and such, then have the gamestate and analytics consume them
+            - But do I want GameState to have such logic?
+        - Also do I want more in depth analytics?
+            - Using events this way will mean I gain events for each resource node completed, and each resource gathered, but not the two together.
+            - Can make events more robust, to contain what caused them? Ie: an event for XpGained would contain the root event also inside it?
+                - But that feels fairly messy
+        - Solution A:
+            - Make the subsystems such as XpSystem and LootSystem, be directly used by the ResourceNode system
+            - This way the event would include all the info (xp, skill, loot)
+            - ISSUE: This would make the events fairly large
+        - Solution B:
+            - Raise the events separately, stop being a little bitch
+            - You will need to find a way to save analytics and data at the same time regardless
+            - For now, just get the fucking thing working and stop being such a stupid asshole about it. Also, have fun: because otherwise what's the point.
 
 ### Fixes?
 
