@@ -1,9 +1,9 @@
 
-public struct ItemCollectedEvent: IEvent
+public struct ItemGained: IEvent
 {
     public int ItemId { get; set; }
     public int Amount { get; set; }
-    public ItemCollectedEvent(int itemId, int amount) {
+    public ItemGained(int itemId, int amount) {
         ItemId = itemId;
         Amount = amount;
     }

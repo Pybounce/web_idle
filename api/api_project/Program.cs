@@ -11,10 +11,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<TickSystem>();
 builder.Services.AddSingleton<IScopedTickSystem, ScopedTickSystem>();
 builder.Services.AddScoped<IEventHub, EventHub>();
+builder.Services.AddScoped<ILootSystem, LootSystem>();
 builder.Services.AddScoped<IResourceHarvester, ResourceHarvester>();
 builder.Services.AddScoped<IClientReader, ClientReader>();
 builder.Services.AddScoped<IClientWriter, ClientWriter>();
 builder.Services.AddScoped<ISaveSystem, SaveSystem>();
+builder.Services.AddScoped<IXpSystem, XpSystem>();
 
 var app = builder.Build();
 

@@ -22,6 +22,13 @@ public class WebSocketMiddleware {
                     var messageReader = scope.ServiceProvider.GetRequiredService<IClientReader>();
                     var messageWriter = scope.ServiceProvider.GetRequiredService<IClientWriter>();
 
+                    // This sucks but I don't care
+                    // These services are only ever used by decoupled events, and never directly injected
+                    // So they have to be manually instaniated here
+                    var lootSystem = scope.ServiceProvider.GetRequiredService<ILootSystem>();
+                    var saveSystem = scope.ServiceProvider.GetRequiredService<ISaveSystem>();
+                    var xpSystem = scope.ServiceProvider.GetRequiredService<IXpSystem>();
+
                     messageWriter.InitSocket(webSocket);
                     await messageReader.ReadMessages(webSocket);
                 }
@@ -40,3 +47,4 @@ public class WebSocketMiddleware {
 
 
 }
+
