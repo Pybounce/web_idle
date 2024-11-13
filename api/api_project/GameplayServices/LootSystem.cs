@@ -13,6 +13,7 @@ public class LootSystem: ILootSystem, IDisposable {
     }
 
     public void OnResourceHarvestComplete(ResourceHarvestComplete e) {
+        // TODO: Implement loot tables so itemId can be derived from resourceNodeId 
         _eventHub.Publish<ItemGained>(new ItemGained(1, 1));
     }
 

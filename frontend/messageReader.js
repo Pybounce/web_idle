@@ -14,6 +14,10 @@ function handleMessage(message) {
       inventory.addItem(message.ItemId, message.Amount);
       inventory.log();
       break;
+    case ReadMessageTypes.XpGained:
+      skillventory.addXp(message.SkillId, message.Amount);
+      skillventory.log();
+      break;
     default:
       console.log("you fucked up");
       break;

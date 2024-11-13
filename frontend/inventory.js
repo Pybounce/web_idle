@@ -11,7 +11,7 @@ class Inventory {
     if (this.items.has(itemId)) {
       this.items.set(itemId, this.items.get(itemId) + amount);
     } else {
-      this.items.set(itemId, 1);
+      this.items.set(itemId, amount);
     }
   }
   hasItem(itemId) {
