@@ -1,6 +1,4 @@
 
-using Azure.Core;
-using Azure.Identity;
 using Microsoft.Azure.Cosmos;
 
 public interface IDbIO {
@@ -10,14 +8,34 @@ public interface IDbIO {
 public class DbIO: IDbIO {
     
     private readonly CosmosClient _dbClient;
+    private readonly IScopedTickSystem _tickSystem;
 
-    public DbIO() {
-        _dbClient = CreateDbClient();
+    public DbIO(ICosmosClientFactory cosmosClientFactory, IScopedTickSystem tickSystem) {
+        _dbClient = cosmosClientFactory.NewClient();
+        _tickSystem = tickSystem;
+        _tickSystem.OnTick += OnTick;
+
     }
 
-    private CosmosClient CreateDbClient() {
-        TokenCredential credential = new DefaultAzureCredential();
-        return new CosmosClient("AccountEndpoint=https://skybounce-cosmosdb-web-idle.documents.azure.com:443/;AccountKey=E3HOo5nH8lHHXkK7h0icLPmJkSa5bJUZE9Nwuhz2KuYuidpIY8DA0xQpZZ29Mv7THlDKdhawJp0TACDbmo0fTA==;", credential);
+    private int x = -1;
+    private async void OnTick() {
+        x += 1;
+        if (x % 10 == 0) {
+            var container = _dbClient.GetDatabase("main-db").GetContainer("main-container");
+            var pi = new PlayerInventory() {
+                Something = x * 100,
+                UserId = x.ToString(),
+                id = x.ToString()
+            };
+            Console.WriteLine("writing");
+            await container.CreateItemAsync<PlayerInventory>(pi, new PartitionKey(pi.UserId));
+            Console.WriteLine("written");
+        }
+    }
+
+    public void Dispose() {
+        _tickSystem.OnTick -= OnTick;
+        _dbClient.Dispose();
     }
 
 }
