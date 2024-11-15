@@ -28,7 +28,6 @@ public class WebSocketMiddleware {
                     var lootSystem = scope.ServiceProvider.GetRequiredService<ILootSystem>();
                     var saveSystem = scope.ServiceProvider.GetRequiredService<ISaveSystem>();
                     var xpSystem = scope.ServiceProvider.GetRequiredService<IXpSystem>();
-                    var dbIO = scope.ServiceProvider.GetRequiredService<IDbIO>();
 
                     messageWriter.InitSocket(webSocket);
                     await messageReader.ReadMessages(webSocket);

@@ -2,39 +2,33 @@
 using Microsoft.Azure.Cosmos;
 
 public interface IDbIO {
-
+    public Task SavePlayerInventoryAsync(Inventory inventory);
 }
 
 public class DbIO: IDbIO {
     
     private readonly CosmosClient _dbClient;
-    private readonly IScopedTickSystem _tickSystem;
 
-    public DbIO(ICosmosClientFactory cosmosClientFactory, IScopedTickSystem tickSystem) {
+    public DbIO(ICosmosClientFactory cosmosClientFactory) {
         _dbClient = cosmosClientFactory.NewClient();
-        _tickSystem = tickSystem;
-        _tickSystem.OnTick += OnTick;
-
     }
 
-    private int x = -1;
-    private async void OnTick() {
-        x += 1;
-        if (x % 10 == 0) {
-            var container = _dbClient.GetDatabase("main-db").GetContainer("main-container");
-            var pi = new PlayerInventory() {
-                Something = x * 100,
-                UserId = x.ToString(),
-                id = x.ToString()
-            };
-            Console.WriteLine("writing");
-            await container.CreateItemAsync<PlayerInventory>(pi, new PartitionKey(pi.UserId));
-            Console.WriteLine("written");
-        }
+    public async Task SavePlayerInventoryAsync(Inventory inventory) {
+        var userId = "0";
+        var inventoryId = "0";
+        var playerInventory = new PlayerInventory() {
+            UserId = userId,
+            id = inventoryId,
+            Items = inventory.GetItems()
+        };
+
+        var container = _dbClient.GetDatabase("main-db").GetContainer("main-container");
+
+        await container.UpsertItemAsync<PlayerInventory>(playerInventory);
+
     }
 
     public void Dispose() {
-        _tickSystem.OnTick -= OnTick;
         _dbClient.Dispose();
     }
 

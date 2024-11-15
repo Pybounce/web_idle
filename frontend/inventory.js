@@ -4,9 +4,8 @@ class Inventory {
   }
 
   addItem(itemId, amount) {
-    var count = 1;
-    if (amount) {
-      count = amount;
+    if (!amount) {
+      amount = 1;
     }
     if (this.items.has(itemId)) {
       this.items.set(itemId, this.items.get(itemId) + amount);

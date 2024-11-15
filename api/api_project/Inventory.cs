@@ -33,5 +33,12 @@ public class Inventory {
             }
         }
     }
+
+    /// <summary>
+    /// Returns a copy of all items in the inventory
+    /// </summary>
+    public Dictionary<int, int> GetItems() {
+        return new Dictionary<int, int>(_items);
+    }
 }
 
