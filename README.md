@@ -1,3 +1,19 @@
+#### ToDo
+
+- [ ] Static data loading
+  - Must be loaded on web server start and stay
+  - Must be accessible for all other services
+- [ ] Loot table service
+  - Pretty simple once the static loot table data can be loaded in
+  - Save different itemIds to db
+- [ ] Load in player inventory when they connect
+  - Probably the SaveSystem will do this
+  -
+
+#### To Think About
+
+- Do I just make every service a singleton and handle playerIds? (probably not)
+
 ### Database
 
 #### Needs to store:
@@ -44,6 +60,12 @@
         - For example the loot system requires the static data be loaded into the web server before it can check the tables
         - May be something solved when doing auth, but there may also be a way of telling the webapp that it's not truely online until certain startup tasks are done in the singleton services
         - Bigger issue: The singleton service will only startup when another service needs it (ie loot table, ie when a player is online). Can look into making it a hosted service but those are for long running tasks, so who knows.
+        - SOLUTION A: Make each service contain an event buffer?
+            - If an event cannot be actioned, it stays in the buffer until the service dependancy is rectified
+        - BIGGER ISSUE: Better to just have some service say whether or not the player can do stuff
+            - Like a SetupService or something
+            - Since there are many things that must be setup before we can begin processing events this way
+            - Issue with an eventbuffer per consuming service is that the clientWrite will consume and send an ItemGained, but that may not have been written since the SaveSystem hasn't even loaded in the players current inventory
 
 ### Static Data
 
