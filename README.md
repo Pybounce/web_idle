@@ -30,8 +30,38 @@
     - Invididual players code will be on another thread since the services are scoped
     - HOWEVER: Having everything work async does not add much overhead and would make the code somewhat easier to use since you know it works
 
-#### Enchancements
+### Enchancements
 
     - Make messages contain the current amount so it's self correcting over time
 
-#### Bugs
+### Bugs
+
+    - Bug free!
+
+### Possible Future Bugs
+
+    - Some systems require other systems to do things before they can function
+        - For example the loot system requires the static data be loaded into the web server before it can check the tables
+        - May be something solved when doing auth, but there may also be a way of telling the webapp that it's not truely online until certain startup tasks are done in the singleton services
+        - Bigger issue: The singleton service will only startup when another service needs it (ie loot table, ie when a player is online). Can look into making it a hosted service but those are for long running tasks, so who knows.
+
+### Static Data
+
+#### General
+
+    - Much data for the game is static for all players, things like the loot tables for example.
+    - There should be a way of getting that data into the webserver without a new player doing it every time
+
+### Solution A: Singleton Service
+
+    - A singleton service that will get a db client, load in the static data on startup, and then dispose of the db client
+        - No point keeping a db client active if it's done fetching the data it needs
+
+### Loot Table and System
+
+#### Database Collection Stores:
+
+    - ResourceNodeId
+    - List<(ItemId, ChanceDenominator (int, chance = 1 / ChanceDenominator))>
+    - LootSystem will have access to static data (where this table will lie)
+        - Loot system will then run through each and raise events on successful chance outcome.
