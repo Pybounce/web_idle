@@ -30,7 +30,7 @@ public class ResourceHarvester: IResourceHarvester, IDisposable {
         }
     }
 
-    private void OnTick() {
+    private void OnTick(Tick tick) {
         if (_resourceId != null) {
             _eventHub.Publish(new ResourceHarvestComplete { ResourceId = _resourceId.Value });
         }

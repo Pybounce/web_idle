@@ -9,9 +9,7 @@ public class SaveSystem: ISaveSystem, IDisposable {
     /// <summary>
     /// Amount of ticks between saves to the db
     /// </summary>
-    private int _saveTickDelay = 100;
     private GameState _gameState;
-
     public SaveSystem(IScopedTickSystem tickSystem) {
         _tickSystem = tickSystem;
         _tickSystem.OnTick += OnTick;
@@ -21,13 +19,15 @@ public class SaveSystem: ISaveSystem, IDisposable {
 
 
 
-    public void OnTick() {
+    public async void OnTick(Tick tick) {
         //save every x ticks using modulo
+
     }
 
     public void Dispose() {
         _tickSystem.OnTick -= OnTick;
     }
+
 }
 
 

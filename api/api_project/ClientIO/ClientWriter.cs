@@ -28,7 +28,7 @@ public class ClientWriter: IClientWriter, IDisposable {
         _webSocket = webSocket;
     }
 
-    private async void SendMessages() {
+    private async void SendMessages(Tick tick) {
         if (_webSocket != null && _webSocket.State == WebSocketState.Open) {
             await _slimShady.LockAsync(async () => {
                 for (int i = _messageBuffer.Count - 1; i >= 0; i--) {
