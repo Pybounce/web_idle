@@ -5,7 +5,7 @@ public interface IDbIO {
     public Task SavePlayerInventoryAsync(Inventory inventory);
 }
 
-public class DbIO: IDbIO {
+public class DbIO: IDbIO, IDisposable {
     
     private readonly CosmosClient _dbClient;
 

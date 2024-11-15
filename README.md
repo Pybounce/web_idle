@@ -35,11 +35,3 @@
     - Make messages contain the current amount so it's self correcting over time
 
 #### Bugs
-
-    - Exiting websocket will not save data in web server cache
-        - Since many of the services are scoped, they lose their data when the websocket connection ends
-        - Could either flush all events through and save on exit of socket (but this has the drawback of bypassing the tick system and overloading things)
-        - Could make the whole eventhub a singleton so once raised, it will be eventually consistent?
-        - Same goes with the save system, it will need to be a singleton
-        - However I could just skip the flushing of events, and save whatever state the save system has.
-            - Then rate limiting for log on/log off will limit those requests

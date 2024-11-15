@@ -1,10 +1,12 @@
 
 
-public interface ISaveSystem {
 
+public interface ISaveSystem: IAsyncDisposable, IDisposable {
+    // sucks that I am forcing the save system to implement these but I can't be bothered to create a wrapper to optionally do await using var in the web socket middleware
+    // so deal with it
 }
 
-public class SaveSystem: ISaveSystem, IDisposable {
+public class SaveSystem: ISaveSystem  {
     private IScopedTickSystem _tickSystem;
     private IEventHub _eventHub;
     private readonly IDbIO _db;
@@ -42,6 +44,10 @@ public class SaveSystem: ISaveSystem, IDisposable {
         _gameState.PlayerInventory.AddItem(e.ItemId, e.Amount);
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        await _db.SavePlayerInventoryAsync(_gameState.PlayerInventory);
+    }
 }
 
 
