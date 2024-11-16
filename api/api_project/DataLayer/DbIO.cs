@@ -1,15 +1,15 @@
 
 using Microsoft.Azure.Cosmos;
 
-public interface IDbIO {
+public interface IGameDb {
     public Task SavePlayerInventoryAsync(Inventory inventory);
 }
 
-public class DbIO: IDbIO, IDisposable {
+public class GameDb: IGameDb, IDisposable {
     
     private readonly CosmosClient _dbClient;
 
-    public DbIO(ICosmosClientFactory cosmosClientFactory) {
+    public GameDb(ICosmosClientFactory cosmosClientFactory) {
         _dbClient = cosmosClientFactory.NewClient();
     }
 

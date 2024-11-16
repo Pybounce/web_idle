@@ -17,10 +17,10 @@ builder.Services.AddScoped<IClientReader, ClientReader>();
 builder.Services.AddScoped<IClientWriter, ClientWriter>();
 builder.Services.AddScoped<ISaveSystem, SaveSystem>();
 builder.Services.AddScoped<IXpSystem, XpSystem>();
-builder.Services.AddScoped<IDbIO, DbIO>();
+builder.Services.AddScoped<IGameDb, GameDb>();
 
 
-builder.Services.AddScoped<ICosmosClientFactory>(sp => {
+builder.Services.AddSingleton<ICosmosClientFactory>(sp => {
     var config = sp.GetRequiredService<IConfiguration>();
     var connectionString = config.GetConnectionString("CosmosDb");
     if (connectionString == null) {

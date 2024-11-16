@@ -9,14 +9,14 @@ public interface ISaveSystem: IAsyncDisposable, IDisposable {
 public class SaveSystem: ISaveSystem  {
     private IScopedTickSystem _tickSystem;
     private IEventHub _eventHub;
-    private readonly IDbIO _db;
+    private readonly IGameDb _db;
     
     /// <summary>
     /// Amount of ticks between saves to the db
     /// </summary>
     private int _saveTickDelay = 20;
     private GameState _gameState;
-    public SaveSystem(IScopedTickSystem tickSystem, IDbIO db, IEventHub eventHub) {
+    public SaveSystem(IScopedTickSystem tickSystem, IGameDb db, IEventHub eventHub) {
         _tickSystem = tickSystem;
         _tickSystem.OnTick += OnTick;
         _gameState = new GameState();   //Load state from db here
