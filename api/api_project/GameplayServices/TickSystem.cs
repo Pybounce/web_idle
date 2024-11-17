@@ -19,6 +19,7 @@ public class TickSystem : IHostedService, IDisposable
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
+        Console.WriteLine("stopping tick");
         _timer?.Change(Timeout.Infinite, 0);
         return Task.CompletedTask;
     }

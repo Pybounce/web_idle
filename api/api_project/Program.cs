@@ -9,6 +9,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddHostedService<TickSystem>();
+builder.Services.AddHostedService<HostedDataService>();
+
 builder.Services.AddSingleton<IScopedTickSystem, ScopedTickSystem>();
 builder.Services.AddScoped<IEventHub, EventHub>();
 builder.Services.AddScoped<ILootSystem, LootSystem>();
@@ -19,6 +21,7 @@ builder.Services.AddScoped<ISaveSystem, SaveSystem>();
 builder.Services.AddScoped<IXpSystem, XpSystem>();
 builder.Services.AddScoped<IGameDb, GameDb>();
 
+builder.Services.AddSingleton<ILootDataService, LootDataService>();
 
 builder.Services.AddSingleton<ICosmosClientFactory>(sp => {
     var config = sp.GetRequiredService<IConfiguration>();
