@@ -49,6 +49,8 @@
 ### Enchancements
 
     - Make messages contain the current amount so it's self correcting over time
+    - Inject container and db names as env variables
+    - Tickables across users are run synchonously, each user's tickables can be run in parallel
 
 ### Bugs
 
