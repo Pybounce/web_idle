@@ -7,11 +7,13 @@ public class LootSystem: ILootSystem, IDisposable {
 
     private readonly IEventHub _eventHub;
     private readonly ILootDataService _lootDataService;
+    private readonly IRandomNumberGenerator _rng;
     
-    public LootSystem(IEventHub eventHub, ILootDataService lootDataService) {
+    public LootSystem(IEventHub eventHub, ILootDataService lootDataService, IRandomNumberGenerator rng) {
         _eventHub = eventHub;
         _eventHub.Subscribe<ResourceHarvestComplete>(OnResourceHarvestComplete);
         _lootDataService = lootDataService;
+        _rng = rng;
     }
 
     public void OnResourceHarvestComplete(ResourceHarvestComplete e) {
@@ -31,11 +33,10 @@ public class LootSystem: ILootSystem, IDisposable {
     }
 
     private List<(int itemId, int amount)> CalcItemLoot(LootTable table) {
-        var rand = new Random();
         var output = new List<(int, int)>();
 
         foreach (var itemChance in table.ItemChances) {
-            if (rand.Next(itemChance.ChanceDenominator) == 0) {
+            if (_rng.Next(itemChance.ChanceDenominator) == 0) {
                 output.Add((itemChance.ItemId, 1));
             }
         }

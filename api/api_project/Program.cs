@@ -21,6 +21,8 @@ builder.Services.AddScoped<ISaveSystem, SaveSystem>();
 builder.Services.AddScoped<IXpSystem, XpSystem>();
 builder.Services.AddScoped<IGameDb, GameDb>();
 
+builder.Services.AddScoped<IRandomNumberGenerator, RandomNumberGenerator>();
+
 builder.Services.AddSingleton<ILootDataService, LootDataService>();
 
 builder.Services.AddSingleton<ICosmosClientFactory>(sp => {

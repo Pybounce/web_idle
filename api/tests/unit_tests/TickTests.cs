@@ -1,9 +1,5 @@
 namespace unit_tests;
 
-using Microsoft.OpenApi.Models;
-using Moq;
-
-
 
 [TestFixture]
 public class TickTests {

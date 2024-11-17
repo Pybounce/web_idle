@@ -26,7 +26,7 @@ public class LootDataService: ILootDataService, IDisposable {
 
     public bool TryGetTable(int resourceId, out LootTable table) {
         foreach (var lt in _lootTables) {
-            if (lt.ResourceId == resourceId) {
+            if (lt.ResourceId == resourceId && lt.ItemChances != null && lt.ItemChances.Length > 0) {
                 table = lt;
                 return true;
             }

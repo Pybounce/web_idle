@@ -6,6 +6,6 @@ public record LootTable {
 }
 
 public record LootTableItem {
-    public int ItemId { get; set; }
-    public int ChanceDenominator { get; set; }
+    public required int ItemId { get; set; }
+    public required int ChanceDenominator { get; set; }
 }
