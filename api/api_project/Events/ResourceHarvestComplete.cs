@@ -1,4 +1,4 @@
 
 public struct ResourceHarvestComplete: IEvent {
-    public int ResourceId { get; set; }
+    public required int ResourceId { get; set; }
 }

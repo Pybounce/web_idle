@@ -4,6 +4,10 @@ using Moq;
 using Bogus;
 using Bogus.Extensions.UnitedKingdom;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+using NuGet.Frameworks;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 
 [TestFixture]
 public class LootSystemTests {
@@ -88,13 +92,12 @@ public class LootSystemTests {
     }
 
     [Test]
-    public void OnResourceHarvestComplete___LootTableChance___StatisticallyCorrectAmountOfEventsRaised() {
+    public void OnResourceHarvestComplete___LootTableChanceEqualsOne___EventRaisedEveryTime() {
         var resourceId = _faker.Random.Int(0);
         var itemId = _faker.Random.Int(0);
-        var chanceDenominator = _faker.Random.Int(1);
         var itemChance = new LootTableItem() {
             ItemId = itemId,
-            ChanceDenominator = chanceDenominator
+            ChanceDenominator = 1
         };
         LootTable table = new LootTable() {
             id = "",
@@ -107,25 +110,111 @@ public class LootSystemTests {
         };
         _lootSystem = new LootSystem(_eventHub.Object, _lootData.Object, new RandomNumberGenerator());
     
-        double chance = 1.0 / (double)itemChance.ChanceDenominator;
-        int testsRun = 5000;
-        double expectedItemsGained = chance * testsRun;
-        int minExpectedItemsGained = (int)(expectedItemsGained * 0.95);
-        int maxExpectedItemsGained = (int)(expectedItemsGained * 1.05);
+        int testsToRun = 500000;
 
-        while (testsRun > 0) {
+
+        for (int i = 0; i < testsToRun; i++) {
             _lootSystem.OnResourceHarvestComplete(resourceHarvestCompleteEvent);
-            testsRun -= 1;
         }
 
-        _eventHub.Verify(x => x.Publish(It.IsAny<ItemGained>()), Times.Between(minExpectedItemsGained, maxExpectedItemsGained, Moq.Range.Inclusive));
+
+        _eventHub.Verify(x => x.Publish(It.IsAny<ItemGained>()), Times.Exactly(testsToRun));
     }
 
-    //[TestCase(0)]
-    public void asd(int rngReturn) {
+    private class LootDataStub : ILootDataService
+    {
+        private LootTable _table;
+        public LootDataStub(LootTable table) {
+            _table = table;
+        }
 
-        _rng.Setup(m => m.Next(It.IsAny<int>())).Returns(rngReturn);
+        public Task InitAsync()
+        {
+            throw new NotImplementedException();
+        }
 
-        Assert.That(true);
+        public bool TryGetTable(int resourceId, out LootTable table)
+        {
+            table = _table;
+            return true;
+        }
     }
+
+    /// <summary>
+    /// This might be the worst thing I've written in a while however...
+    /// <br>Using Moq added too much overhead to the 100M calls</br>
+    /// </summary>
+    [Test]
+    public void OnResourceHarvestComplete___ManyLootTableChances___StatisticallyCorrectAmountOfEventsRaised() {
+        
+        var resourceId = _faker.Random.Int(0);
+        var tableItemCount = _faker.Random.Int(5, 20);
+        var lootTableItems = new LootTableItem[tableItemCount];
+        var baseItemChances = new Dictionary<int, double>();
+
+        for (int i = 0; i < tableItemCount; i++) {
+            var itemId = _faker.Random.Int(0);
+            var chanceDenominator = _faker.Random.Int(1, 100_000);
+            var itemChance = new LootTableItem() {
+                ItemId = itemId,
+                ChanceDenominator = chanceDenominator
+            };
+            lootTableItems[i] = itemChance;
+            double baseChance = 1.0 / (double)chanceDenominator;
+
+            if (baseItemChances.ContainsKey(itemId)) {
+                baseItemChances[itemId] += baseChance;
+            }
+            else {
+                baseItemChances.Add(itemId, baseChance);
+            }
+        }
+
+        LootTable table = new LootTable() {
+            id = "",
+            ResourceId = resourceId,
+            ItemChances = lootTableItems
+        };
+
+        var resourceHarvestCompleteEvent = new ResourceHarvestComplete() {
+            ResourceId = resourceId
+        };
+
+        var actualRaised = new Dictionary<int, int>();
+        var eventHub = new EventHub();
+        var incrementActual = (ItemGained e) => {
+            if (actualRaised.ContainsKey(e.ItemId)) {
+                actualRaised[e.ItemId] += 1;
+            }
+            else {
+                actualRaised.Add(e.ItemId, 1);
+            }
+        };
+        eventHub.Subscribe<ItemGained>(incrementActual);
+
+        _lootSystem = new LootSystem(eventHub, new LootDataStub(table), new RandomNumberGenerator());
+    
+        int testsToRun = 100_000_000;
+
+
+        for (int i = 0; i < testsToRun; i++) {
+            _lootSystem.OnResourceHarvestComplete(resourceHarvestCompleteEvent);
+        }
+        
+        for (int i = 0; i < tableItemCount; i++) {
+            double expectedItemsGained = baseItemChances[lootTableItems[i].ItemId] * (double)testsToRun;
+            int minExpectedItemsGained = (int)(expectedItemsGained * 0.9);
+            int maxExpectedItemsGained = (int)(expectedItemsGained * 1.1);
+            var itemsGained = actualRaised[lootTableItems[i].ItemId];
+            Assert.That(itemsGained >= minExpectedItemsGained && itemsGained <= maxExpectedItemsGained);
+        }
+        //Assert.That(true);
+    }
+
+
+    //Chance = 1 -> always happens
+
+
+
+
 }
