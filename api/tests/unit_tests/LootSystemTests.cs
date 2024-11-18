@@ -208,13 +208,6 @@ public class LootSystemTests {
             var itemsGained = actualRaised[lootTableItems[i].ItemId];
             Assert.That(itemsGained >= minExpectedItemsGained && itemsGained <= maxExpectedItemsGained);
         }
-        //Assert.That(true);
     }
-
-
-    //Chance = 1 -> always happens
-
-
-
 
 }
