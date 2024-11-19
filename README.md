@@ -56,36 +56,28 @@
 
     - Bug free!
 
-### Possible Future Bugs
+### Loading Saved Data
 
-    - Some systems require other systems to do things before they can function
-        - For example the loot system requires the static data be loaded into the web server before it can check the tables
-        - May be something solved when doing auth, but there may also be a way of telling the webapp that it's not truely online until certain startup tasks are done in the singleton services
-        - Bigger issue: The singleton service will only startup when another service needs it (ie loot table, ie when a player is online). Can look into making it a hosted service but those are for long running tasks, so who knows.
-        - SOLUTION A: Make each service contain an event buffer?
-            - If an event cannot be actioned, it stays in the buffer until the service dependancy is rectified
-        - BIGGER ISSUE: Better to just have some service say whether or not the player can do stuff
-            - Like a SetupService or something
-            - Since there are many things that must be setup before we can begin processing events this way
-            - Issue with an eventbuffer per consuming service is that the clientWrite will consume and send an ItemGained, but that may not have been written since the SaveSystem hasn't even loaded in the players current inventory
+    - When the player logs in, they should load in their inventory and skillventory
+    - Before this is loaded, they will not be able to harvest any resources since the ResourceHarvester won't know what level they are
+    - There needs to be something similar to the setup data services, but per request
+    - MORE IN AUTH BELOW
 
-### Static Data
+### Auth
 
-#### General
+    - Normal controller endpoint for auth login
+        - Takes in username and hashed password, returns authToken
+    - Then the game websocket is opened, and before it initialises anything, it will verify the auth token
+    - Once the auth token is varified, it will load in user data to the webserver
+    - Once the user data is loaded in, it will add the remaining services with serviceProvider
+    - Once finished, it will send a message to the client that login was successful
+    - Client can then send messages like StartResourceHarvest etc
+    - NOTE: On each new message from the client, the auth token must be varified
 
-    - Much data for the game is static for all players, things like the loot tables for example.
-    - There should be a way of getting that data into the webserver without a new player doing it every time
+    - Can use json web tokens (jwt) for auth.
+        - Should mean that the webserver doesn't have to save anything additional.
+        - Client is giving the JWT, and then starts sending it with every ws request (or any request)
 
-### Solution A: Singleton Service
-
-    - A singleton service that will get a db client, load in the static data on startup, and then dispose of the db client
-        - No point keeping a db client active if it's done fetching the data it needs
-
-### Loot Table and System
-
-#### Database Collection Stores:
-
-    - ResourceNodeId
-    - List<(ItemId, ChanceDenominator (int, chance = 1 / ChanceDenominator))>
-    - LootSystem will have access to static data (where this table will lie)
-        - Loot system will then run through each and raise events on successful chance outcome.
+    - If a websocket connection is made without a JWT, reject it
+        - Since we need to know the user before starting up all the services so we can load in appropriate data first
+    - Also, obviously if any request, barring login and few others, that isn't with an auth token, reject it.
