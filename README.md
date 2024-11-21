@@ -48,9 +48,15 @@
 
 ### Enchancements
 
-    - Make messages contain the current amount so it's self correcting over time
-    - Inject container and db names as env variables
-    - Tickables across users are run synchonously, each user's tickables can be run in parallel
+    - [ ] Make messages contain the current amount so it's self correcting over time
+    - [ ] Inject container and db names as env variables
+    - [ ] Tickables across users are run synchonously, each user's tickables can be run in parallel
+    - [ ] Make db systems singletons
+        + Would save fetching the container every request
+        - Wouldn't make a huge difference to a persistent websocket
+        - Less secure, probably
+    - [ ] Make logic systems separate from db systems
+        - Right now authAPI talks to authDb, which could itself be userDb with some authSystem for logic.
 
 ### Bugs
 
