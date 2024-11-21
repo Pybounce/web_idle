@@ -1,3 +1,110 @@
+class AppManager {
+  constructor() {
+    this.loginManager = new LoginManager();
+    this.gameManager = new GameManager();
+  }
+  showAuth() {
+    this.loginManager.activate();
+    this.gameManager.deactivate();
+  }
+  showGame() {
+    this.loginManager.deactivate();
+    this.gameManager.activate();
+  }
+}
+
+class LoginManager {
+  constructor() {
+    this.container = document.getElementById("auth_login_container");
+    this.deactivate();
+    this.isActive = false;
+  }
+  deactivate() {
+    if (!this.isActive) {
+      return;
+    }
+    this.isActive = false;
+    this.container.style.display = "none";
+
+    this.isActive = false;
+  }
+  activate() {
+    if (this.isActive) {
+      return;
+    }
+    this.container.style.display = "block";
+    document.getElementById("login_btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.tryLogin();
+    });
+
+    this.isActive = true;
+  }
+
+  tryLogin() {
+    var username = document.getElementById("login_username").value;
+    var password = document.getElementById("login_password").value;
+    console.log(username);
+    fetch("http://localhost:5042/Auth/Login", {
+      method: "POST",
+      body: JSON.stringify({
+        username: username,
+        hashedPassword: password,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.text())
+      .then((body) => console.log(body))
+      .catch((e) => console.log("error"));
+  }
+}
+
+class GameManager {
+  constructor() {
+    this.container = document.getElementById("game_container");
+    this.deactivate();
+    this.isActive = false;
+  }
+  deactivate() {
+    if (!this.isActive) {
+      return;
+    }
+    this.container.style.display = "none";
+    this.isActive = false;
+  }
+  activate() {
+    if (this.isActive) {
+      return;
+    }
+    this.container.style.display = "block";
+    this.isActive = true;
+  }
+}
+
+var app = new AppManager();
+app.showAuth();
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//-----------------------------------------------------------------------------------------
+// ALL OLD BELOW
+
 var http_button = document.getElementById("http_button");
 http_button.addEventListener("click", function () {
   fetch("http://localhost:5042/Test/PostTest", {

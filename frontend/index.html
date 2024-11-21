@@ -2,15 +2,43 @@
 <head>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-  <div id="http_button" class="button">HTTP</div>
   <div id="close_socket_button" class="button">CLOSE SOCKET CONNECTION</div>
-  <div id="ws_button" data-resource-id="0" class="resourceNode inactive">
-    Resource A
+
+  <div id="auth_login_container" style="display: none">
+    <div>Auth!</div>
+    <div>
+      <label for="username"><b>Username</b></label>
+      <input
+        id="login_username"
+        type="text"
+        placeholder="Enter Username"
+        name="username"
+        required
+      />
+      <label for="password"><b>Password</b></label>
+      <input
+        id="login_password"
+        type="text"
+        placeholder="Enter Password"
+        name="password"
+        required
+      />
+      <button id="login_btn" type="button">Login</button>
+    </div>
   </div>
-  <div id="ws_button" data-resource-id="1" class="resourceNode inactive">
-    Resource B
+
+  <div id="game_container" style="display: none">
+    <div id="http_button" class="button">HTTP</div>
+    <div id="ws_button" data-resource-id="0" class="resourceNode inactive">
+      Resource A
+    </div>
+    <div id="ws_button" data-resource-id="1" class="resourceNode inactive">
+      Resource B
+    </div>
   </div>
+
   <script src="inventory.js"></script>
   <script src="skillventory.js"></script>
   <script src="ReadModels/ReadMessageTypes.js"></script>
