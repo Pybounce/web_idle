@@ -35,13 +35,18 @@ class LoginManager {
     this.container.style.display = "block";
     document.getElementById("login_btn").addEventListener("click", (e) => {
       e.stopPropagation();
-      this.tryLogin();
+      this.login();
     });
-
+    document
+      .getElementById("create_account_btn")
+      .addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.createAccount();
+      });
     this.isActive = true;
   }
 
-  tryLogin() {
+  login() {
     var username = document.getElementById("login_username").value;
     var password = document.getElementById("login_password").value;
     console.log(username);
@@ -57,7 +62,25 @@ class LoginManager {
     })
       .then((response) => response.text())
       .then((body) => console.log(body))
-      .catch((e) => console.log("error"));
+      .catch((e) => console.log("login error"));
+  }
+  createAccount() {
+    var username = document.getElementById("create_username").value;
+    var password = document.getElementById("create_password").value;
+    console.log(username);
+    fetch("http://localhost:5042/Auth/CreateAccount", {
+      method: "POST",
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.text())
+      .then((body) => console.log(body))
+      .catch((e) => console.log("create error"));
   }
 }
 

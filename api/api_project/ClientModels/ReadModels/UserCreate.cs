@@ -1,4 +1,4 @@
-public struct UserLogin {
+public struct UserCreate {
     public required string Username { get; set; }
     public required string Password { get; set; }
 }

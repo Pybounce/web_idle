@@ -21,5 +21,13 @@ public class AuthController : ControllerBase
         }
         return Ok("could not find user");
     }
+    [HttpPost(Name = "CreateAccount")]
+    public async Task<ActionResult> CreateAccount(UserCreate userCreate)
+    {
+        if (await _authDb.TryCreateAccount(userCreate)) {
+            return Ok("user created");
+        }
+        return Ok("could not create user");
+    }
 
 }
