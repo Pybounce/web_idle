@@ -11,7 +11,7 @@ public class AuthController : ControllerBase
     public ActionResult Login(UserLogin userLogin)
     {
         Console.WriteLine("username: " + userLogin.Username);
-        Console.WriteLine("hashed password " + userLogin.HashedPassword);
+        Console.WriteLine("password " + userLogin.Password);
         return Ok("ok");
     }
 
