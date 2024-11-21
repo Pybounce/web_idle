@@ -1,14 +1,16 @@
-#### ToDo
+#### ToDo Alpha 1.0
 
-- [ ] Static data loading
-  - Must be loaded on web server start and stay
-  - Must be accessible for all other services
-- [ ] Loot table service
-  - Pretty simple once the static loot table data can be loaded in
-  - Save different itemIds to db
-- [ ] Load in player inventory when they connect
-  - Probably the SaveSystem will do this
-  -
+- [ ] Auth
+  - Create account
+  - Delete account
+  - JWTokens
+  - Update account (password)
+- [ ] Frontend pages
+  - Some split between logging in and gameplay
+- [ ] On login data loading
+  - Loading inventory and skillventory
+- [ ] Actual frontend
+  - Make it not shit
 
 #### To Think About
 
