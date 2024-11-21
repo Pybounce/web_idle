@@ -49,7 +49,7 @@ class LoginManager {
       method: "POST",
       body: JSON.stringify({
         username: username,
-        hashedPassword: password,
+        password: password,
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",

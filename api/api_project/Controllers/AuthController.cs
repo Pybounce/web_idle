@@ -7,12 +7,19 @@ using Microsoft.AspNetCore.Mvc;
 public class AuthController : ControllerBase
 {
 
+    private readonly IAuthDb _authDb;
+
+    public AuthController(IAuthDb authDb) {
+        _authDb = authDb;
+    }
+
     [HttpPost(Name = "Login")]
-    public ActionResult Login(UserLogin userLogin)
+    public async Task<ActionResult> Login(UserLogin userLogin)
     {
-        Console.WriteLine("username: " + userLogin.Username);
-        Console.WriteLine("password " + userLogin.Password);
-        return Ok("ok");
+        if (await _authDb.TryAuthenticate(userLogin)) {
+            return Ok("user found");
+        }
+        return Ok("could not find user");
     }
 
 }
