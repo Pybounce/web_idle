@@ -14,7 +14,7 @@ public class LootSystemTests {
 
     
     private Mock<IEventHub> _eventHub;
-    private Mock<IRngSystem> _rng;
+    private Mock<IRandomNumberGenerator> _rng;
     private Mock<ILootDataService> _lootData;
     private LootSystem _lootSystem;
     private Faker _faker;
@@ -23,7 +23,7 @@ public class LootSystemTests {
     public void SetUp() {
         _faker = new Faker();
         _eventHub = new Mock<IEventHub>();
-        _rng = new Mock<IRngSystem>();
+        _rng = new Mock<IRandomNumberGenerator>();
         _lootData = new Mock<ILootDataService>();
         _lootSystem = new LootSystem(_eventHub.Object, _lootData.Object, _rng.Object);
     }
@@ -108,7 +108,7 @@ public class LootSystemTests {
         var resourceHarvestCompleteEvent = new ResourceHarvestComplete() {
             ResourceId = resourceId
         };
-        _lootSystem = new LootSystem(_eventHub.Object, _lootData.Object, new RngSystem());
+        _lootSystem = new LootSystem(_eventHub.Object, _lootData.Object, new RandomNumberGenerator());
     
         int testsToRun = 500000;
 
@@ -192,7 +192,7 @@ public class LootSystemTests {
         };
         eventHub.Subscribe<ItemGained>(incrementActual);
 
-        _lootSystem = new LootSystem(eventHub, new LootDataStub(table), new RngSystem());
+        _lootSystem = new LootSystem(eventHub, new LootDataStub(table), new RandomNumberGenerator());
     
         int testsToRun = 100_000_000;
 
