@@ -12,6 +12,7 @@ public class UserDb: IUserDb, IDisposable {
 
     private readonly CosmosClient _dbClient;
     private readonly Container _userContainer;
+    
     public UserDb(ICosmosClientFactory cosmosClientFactory) {
         _dbClient = cosmosClientFactory.NewClient();
         _userContainer = _dbClient.GetDatabase("main-db").GetContainer("users");

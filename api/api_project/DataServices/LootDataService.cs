@@ -3,8 +3,7 @@
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
-public interface ILootDataService {
-    public Task InitAsync();
+public interface ILootDataService: IDataService {
     public bool TryGetTable(int resourceId, out LootTable table);
 }
 
