@@ -7,9 +7,9 @@ public class LootSystem: ILootSystem, IDisposable {
 
     private readonly IEventHub _eventHub;
     private readonly ILootDataService _lootDataService;
-    private readonly IRandomNumberGenerator _rng;
+    private readonly IRngSystem _rng;
     
-    public LootSystem(IEventHub eventHub, ILootDataService lootDataService, IRandomNumberGenerator rng) {
+    public LootSystem(IEventHub eventHub, ILootDataService lootDataService, IRngSystem rng) {
         _eventHub = eventHub;
         _eventHub.Subscribe<ResourceHarvestComplete>(OnResourceHarvestComplete);
         _lootDataService = lootDataService;

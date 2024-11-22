@@ -1,12 +1,12 @@
-public interface IRandomNumberGenerator {
+public interface IRngSystem {
     public int Next(int maxExclusive);
 }
 
-public class RandomNumberGenerator: IRandomNumberGenerator {
+public class RngSystem: IRngSystem {
 
     private readonly Random _random;
 
-    public RandomNumberGenerator() {
+    public RngSystem() {
         _random = new Random();
     }
 

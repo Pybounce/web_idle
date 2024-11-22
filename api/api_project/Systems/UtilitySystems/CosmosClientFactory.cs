@@ -1,6 +1,4 @@
 
-using Azure.Core;
-using Azure.Identity;
 using Microsoft.Azure.Cosmos;
 
 public interface ICosmosClientFactory {
