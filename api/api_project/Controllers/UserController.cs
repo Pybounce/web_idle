@@ -13,7 +13,7 @@ public class UserController : ControllerBase
         _userSystem = userSystem;
         _authSystem = authSystem;
     }
-
+    // TODO: Input sanitisation and error handling
     [HttpPost(Name = "Login")]
     public async Task<ActionResult> Login(UserLogin userLogin)
     {
