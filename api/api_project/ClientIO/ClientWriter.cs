@@ -14,12 +14,12 @@ public class ClientWriter: IClientWriter, IDisposable {
     private WebSocket? _webSocket;
     private readonly IEventHub _eventHub;
     
-    public ClientWriter(IScopedTickSystem scopedTickSystem, IEventHub eventHub) {
-        scopedTickSystem.OnTick += SendMessages;
+    public ClientWriter(IEventHub eventHub) {
         _messageBuffer = new List<byte[]>();
         _slimShady = new SlimShady();
         _webSocket = null;
         _eventHub = eventHub;
+        _eventHub.Subscribe<Tick>(SendMessages);
         _eventHub.Subscribe<ItemGained>(WriteItemCollectedEvent);
         _eventHub.Subscribe<XpGainedEvent>(WriteXpGainedEvent);
     }
@@ -45,6 +45,7 @@ public class ClientWriter: IClientWriter, IDisposable {
     public void Dispose() {
         _eventHub.Unsubscribe<ItemGained>(WriteItemCollectedEvent);
         _eventHub.Unsubscribe<XpGainedEvent>(WriteXpGainedEvent);
+        _eventHub.Unsubscribe<Tick>(SendMessages);
     }
 
     private void AddMessage(object data) {

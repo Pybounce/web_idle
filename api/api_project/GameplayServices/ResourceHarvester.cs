@@ -8,15 +8,10 @@ public interface IResourceHarvester {
 public class ResourceHarvester: IResourceHarvester, IDisposable {
     private int? _resourceId { get; set; }
     private readonly IEventHub _eventHub;
-    private readonly IScopedTickSystem _scopedTickSystem;
 
-    public ResourceHarvester(
-        IScopedTickSystem scopedTickSystem, 
-        IEventHub eventHub) 
-        {
+    public ResourceHarvester(IEventHub eventHub) {
         _eventHub = eventHub;
-        _scopedTickSystem = scopedTickSystem;
-        _scopedTickSystem.OnTick += OnTick;
+        _eventHub.Subscribe<Tick>(OnTick);
     }
 
     public bool TryStartResourceHarvest(int resourceId) {
@@ -37,7 +32,7 @@ public class ResourceHarvester: IResourceHarvester, IDisposable {
     }
 
     public void Dispose() {
-        _scopedTickSystem.OnTick -= OnTick;
+        _eventHub.Unsubscribe<Tick>(OnTick);
     }
 
 }

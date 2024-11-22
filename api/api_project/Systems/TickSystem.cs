@@ -1,25 +1,34 @@
 
 
-public interface IScopedTickSystem {
-    public void Tick();
-    public event Action<Tick> OnTick;
+public interface ITickSystem {
 
 }
 
-public class ScopedTickSystem: IScopedTickSystem {
-    public event Action<Tick> OnTick;
+public class TickSystem: ITickSystem, IDisposable
+{
+    private readonly IEventHub _eventHub;
+    private Timer? _timer = null;
     private Tick _tick;
 
-    public ScopedTickSystem() {
+    public TickSystem(IEventHub eventHub) {
+        _eventHub = eventHub;
+        _timer = new Timer(MoveUnits, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
         _tick = new Tick();
     }
 
-    public void Tick() {
+    private void MoveUnits(object? state) {
+        Console.WriteLine("tick " + _tick.RawTick);
         _tick.Next();
-        Console.WriteLine($"Tick {_tick.RawTick}");
-        OnTick?.Invoke(_tick);
+        _eventHub.Publish<Tick>(_tick);
     }
+
+    public void Dispose() {
+        _timer?.Change(Timeout.Infinite, 0);
+        _timer?.Dispose();
+    }
+
 }
+
 
 public struct Tick {
     public int RawTick { get; private set; }
@@ -47,4 +56,3 @@ public struct Tick {
     }
 
 }
-

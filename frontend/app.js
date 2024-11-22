@@ -107,7 +107,7 @@ class GameManager {
 }
 
 var app = new AppManager();
-app.showAuth();
+app.showGame();
 
 //
 //

@@ -7,7 +7,6 @@ public interface ISaveSystem: IAsyncDisposable, IDisposable {
 }
 
 public class SaveSystem: ISaveSystem  {
-    private IScopedTickSystem _tickSystem;
     private IEventHub _eventHub;
     private readonly IGameDb _db;
     
@@ -16,13 +15,11 @@ public class SaveSystem: ISaveSystem  {
     /// </summary>
     private int _saveTickDelay = 20;
     private GameState _gameState;
-    public SaveSystem(IScopedTickSystem tickSystem, IGameDb db, IEventHub eventHub) {
-        _tickSystem = tickSystem;
-        _tickSystem.OnTick += OnTick;
+    public SaveSystem(IGameDb db, IEventHub eventHub) {
         _gameState = new GameState();   //Load state from db here
         _db = db;
         _eventHub = eventHub;
-
+        _eventHub.Subscribe<Tick>(OnTick);
         _eventHub.Subscribe<ItemGained>(OnItemGained);
     }
 
@@ -37,7 +34,8 @@ public class SaveSystem: ISaveSystem  {
     }
 
     public void Dispose() {
-        _tickSystem.OnTick -= OnTick;
+        _eventHub.Unsubscribe<Tick>(OnTick);
+        _eventHub.Unsubscribe<ItemGained>(OnItemGained);
     }
 
     private void OnItemGained(ItemGained e) {

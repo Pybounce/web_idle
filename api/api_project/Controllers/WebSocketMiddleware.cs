@@ -25,6 +25,7 @@ public class WebSocketMiddleware {
                     // This sucks but I don't care
                     // These services are only ever used by decoupled events, and never directly injected
                     // So they have to be manually instantiated here
+                    var tickSystem = scope.ServiceProvider.GetRequiredService<ITickSystem>();
                     var lootSystem = scope.ServiceProvider.GetRequiredService<ILootSystem>();
                     await using var saveSystem = scope.ServiceProvider.GetRequiredService<ISaveSystem>();
                     var xpSystem = scope.ServiceProvider.GetRequiredService<IXpSystem>();

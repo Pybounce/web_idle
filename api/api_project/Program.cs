@@ -8,14 +8,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddHostedService<TickSystem>();
 builder.Services.AddHostedService<HostedDataService>();
 
 builder.Services.AddScoped<IUserDb, UserDb>();
 builder.Services.AddScoped<IUserSystem, UserSystem>();
 builder.Services.AddScoped<IAuthSystem, AuthSystem>();
 
-builder.Services.AddSingleton<IScopedTickSystem, ScopedTickSystem>();
+builder.Services.AddScoped<ITickSystem, TickSystem>();
 builder.Services.AddScoped<IEventHub, EventHub>();
 builder.Services.AddScoped<ILootSystem, LootSystem>();
 builder.Services.AddScoped<IResourceHarvester, ResourceHarvester>();
