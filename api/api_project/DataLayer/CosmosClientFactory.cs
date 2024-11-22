@@ -10,12 +10,11 @@ public interface ICosmosClientFactory {
 public class CosmosClientFactory: ICosmosClientFactory {
     
     private readonly string _connectionString;
-    public CosmosClientFactory(string connectionString) {
-        _connectionString = connectionString;
+    public CosmosClientFactory(IConfiguration configuration) {
+        _connectionString = configuration.GetConnectionString("CosmosDb")!;
     }
 
     public CosmosClient NewClient() {
-        //TokenCredential credential = new DefaultAzureCredential();
         return new CosmosClient(_connectionString);
     }
 

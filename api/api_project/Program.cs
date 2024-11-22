@@ -29,14 +29,7 @@ builder.Services.AddScoped<IRandomNumberGenerator, RandomNumberGenerator>();
 
 builder.Services.AddSingleton<ILootDataService, LootDataService>();
 
-builder.Services.AddSingleton<ICosmosClientFactory>(sp => {
-    var config = sp.GetRequiredService<IConfiguration>();
-    var connectionString = config.GetConnectionString("CosmosDb");
-    if (connectionString == null) {
-        throw new NullReferenceException("cosmos connection string");
-    }
-    return new CosmosClientFactory(connectionString);
-});
+builder.Services.AddSingleton<ICosmosClientFactory, CosmosClientFactory>();
 
 var app = builder.Build();
 
