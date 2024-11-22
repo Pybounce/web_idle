@@ -11,7 +11,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<TickSystem>();
 builder.Services.AddHostedService<HostedDataService>();
 
-builder.Services.AddScoped<IAuthDb, AuthDb>();
+builder.Services.AddScoped<IUserDb, UserDb>();
+builder.Services.AddScoped<IUserSystem, UserSystem>();
+builder.Services.AddScoped<IAuthSystem, AuthSystem>();
 
 builder.Services.AddSingleton<IScopedTickSystem, ScopedTickSystem>();
 builder.Services.AddScoped<IEventHub, EventHub>();

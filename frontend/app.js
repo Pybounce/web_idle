@@ -50,7 +50,7 @@ class LoginManager {
     var username = document.getElementById("login_username").value;
     var password = document.getElementById("login_password").value;
     console.log(username);
-    fetch("http://localhost:5042/Auth/Login", {
+    fetch("http://localhost:5042/User/Login", {
       method: "POST",
       body: JSON.stringify({
         username: username,
@@ -68,7 +68,7 @@ class LoginManager {
     var username = document.getElementById("create_username").value;
     var password = document.getElementById("create_password").value;
     console.log(username);
-    fetch("http://localhost:5042/Auth/CreateAccount", {
+    fetch("http://localhost:5042/User/CreateAccount", {
       method: "POST",
       body: JSON.stringify({
         username: username,

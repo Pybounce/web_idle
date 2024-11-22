@@ -4,27 +4,29 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("[controller]/[action]")]
-public class AuthController : ControllerBase
+public class UserController : ControllerBase
 {
+    private readonly IUserSystem _userSystem;
+    private readonly IAuthSystem _authSystem;
 
-    private readonly IAuthDb _authDb;
-
-    public AuthController(IAuthDb authDb) {
-        _authDb = authDb;
+    public UserController(IUserSystem userSystem, IAuthSystem authSystem) {
+        _userSystem = userSystem;
+        _authSystem = authSystem;
     }
 
     [HttpPost(Name = "Login")]
     public async Task<ActionResult> Login(UserLogin userLogin)
     {
-        if (await _authDb.TryAuthenticate(userLogin)) {
+        if (await _authSystem.TryAuthenticate(userLogin)) {
             return Ok("user found");
         }
         return Ok("could not find user");
     }
+
     [HttpPost(Name = "CreateAccount")]
     public async Task<ActionResult> CreateAccount(UserCreate userCreate)
     {
-        if (await _authDb.TryCreateAccount(userCreate)) {
+        if (await _userSystem.TryCreate(userCreate)) {
             return Ok("user created");
         }
         return Ok("could not create user");
