@@ -4,7 +4,7 @@ using Microsoft.VisualBasic;
 
 public interface IUserDb {
     public Task<bool> IsUsernameTaken(string username);
-    public Task<(bool IsSuccess, User? Result)> TryCreate(UserCreate userCreate);
+    public Task<(bool IsSuccess, UserDocument? Result)> TryCreate(UserCreate userCreate);
     public Task<(bool IsSuccess, string ResultId)> TryGetIdFromCredentials(string username, string password);
 }
 
@@ -19,7 +19,7 @@ public class UserDb: IUserDb, IDisposable {
     }
 
     public async Task<bool> IsUsernameTaken(string username) {
-        var query = _userContainer.GetItemLinqQueryable<User>();
+        var query = _userContainer.GetItemLinqQueryable<UserDocument>();
         var result = query.Where(x => x.Username == username).ToFeedIterator();
         while (result.HasMoreResults) {
             var page = await result.ReadNextAsync();
@@ -28,22 +28,23 @@ public class UserDb: IUserDb, IDisposable {
         return false;
     }
 
-    public async Task<(bool IsSuccess, User? Result)> TryCreate(UserCreate userCreate) {
+    public async Task<(bool IsSuccess, UserDocument? Result)> TryCreate(UserCreate userCreate) {
         if (await IsUsernameTaken(userCreate.Username)) { return (false, null); }
 
-        var newUser = new User() {
+        var newUser = new UserDocument() {
             id = userCreate.Username,   //TODO: Make idCreation or something
+            UserId = userCreate.Username,   //TODO: Make userIdCreation or something
             Username = userCreate.Username,
             Password = userCreate.Password
         };
-        await _userContainer.UpsertItemAsync<User>(newUser);
+        await _userContainer.UpsertItemAsync<UserDocument>(newUser);
         // TODO: Add additional check after inserting that there still is only one, for race conditions
         // Cosmos has a unique key field but it's only unique per partition
         return (true, newUser);
     }
 
     public async Task<(bool IsSuccess, string ResultId)> TryGetIdFromCredentials(string username, string password) {
-        var query = _userContainer.GetItemLinqQueryable<User>();
+        var query = _userContainer.GetItemLinqQueryable<UserDocument>();
         var result = query.Where(x => x.Username == username && x.Password == password).ToFeedIterator();
         while (result.HasMoreResults) {
             var page = await result.ReadNextAsync();

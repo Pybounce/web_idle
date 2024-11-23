@@ -20,7 +20,7 @@ public class SaveSystem: ISaveSystem  {
         _db = db;
         _eventHub = eventHub;
         _eventHub.Subscribe<Tick>(OnTick);
-        _eventHub.Subscribe<ItemGained>(OnItemGained);
+        _eventHub.Subscribe<ItemGainedEvent>(OnItemGained);
     }
 
 
@@ -35,10 +35,10 @@ public class SaveSystem: ISaveSystem  {
 
     public void Dispose() {
         _eventHub.Unsubscribe<Tick>(OnTick);
-        _eventHub.Unsubscribe<ItemGained>(OnItemGained);
+        _eventHub.Unsubscribe<ItemGainedEvent>(OnItemGained);
     }
 
-    private void OnItemGained(ItemGained e) {
+    private void OnItemGained(ItemGainedEvent e) {
         _gameState.PlayerInventory.AddItem(e.ItemId, e.Amount);
     }
 

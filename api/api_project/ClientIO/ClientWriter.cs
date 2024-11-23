@@ -20,7 +20,7 @@ public class ClientWriter: IClientWriter, IDisposable {
         _webSocket = null;
         _eventHub = eventHub;
         _eventHub.Subscribe<Tick>(SendMessages);
-        _eventHub.Subscribe<ItemGained>(WriteItemCollectedEvent);
+        _eventHub.Subscribe<ItemGainedEvent>(WriteItemCollectedEvent);
         _eventHub.Subscribe<XpGainedEvent>(WriteXpGainedEvent);
     }
 
@@ -43,7 +43,7 @@ public class ClientWriter: IClientWriter, IDisposable {
     }
 
     public void Dispose() {
-        _eventHub.Unsubscribe<ItemGained>(WriteItemCollectedEvent);
+        _eventHub.Unsubscribe<ItemGainedEvent>(WriteItemCollectedEvent);
         _eventHub.Unsubscribe<XpGainedEvent>(WriteXpGainedEvent);
         _eventHub.Unsubscribe<Tick>(SendMessages);
     }
@@ -53,7 +53,7 @@ public class ClientWriter: IClientWriter, IDisposable {
         _messageBuffer.Add(Encoding.UTF8.GetBytes(jsonString));
     }
 
-    private void WriteItemCollectedEvent(ItemGained e) {
+    private void WriteItemCollectedEvent(ItemGainedEvent e) {
         AddMessage(new ItemCollected(e.ItemId, e.Amount));
     }
     private void WriteXpGainedEvent(XpGainedEvent e) {

@@ -27,7 +27,7 @@ public class ResourceHarvestSystem: IResourceHarvestSystem, IDisposable {
 
     private void OnTick(Tick tick) {
         if (_resourceId != null) {
-            _eventHub.Publish(new ResourceHarvestComplete { ResourceId = _resourceId.Value });
+            _eventHub.Publish(new ResourceHarvestCompleteEvent { ResourceId = _resourceId.Value });
         }
     }
 
