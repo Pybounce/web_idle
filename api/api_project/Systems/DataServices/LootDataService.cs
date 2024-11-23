@@ -3,15 +3,14 @@
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
-public interface ILootDataService {
-    public Task InitAsync();
-    public bool TryGetTable(int resourceId, out LootTable table);
+public interface ILootDataService: IDataService {
+    public bool TryGetTable(int resourceId, out LootTableDocument table);
 }
 
 public class LootDataService: ILootDataService, IDisposable {
 
     private readonly ICosmosClientFactory _cosmosClientFactory;
-    private LootTable[] _lootTables;
+    private LootTableDocument[] _lootTables;
     
     public LootDataService(ICosmosClientFactory cosmosClientFactory) {
         _cosmosClientFactory = cosmosClientFactory;
@@ -24,7 +23,7 @@ public class LootDataService: ILootDataService, IDisposable {
         await LoadData(dbClient);
     }
 
-    public bool TryGetTable(int resourceId, out LootTable table) {
+    public bool TryGetTable(int resourceId, out LootTableDocument table) {
         foreach (var lt in _lootTables) {
             if (lt.ResourceId == resourceId && lt.ItemChances != null && lt.ItemChances.Length > 0) {
                 table = lt;
@@ -37,8 +36,8 @@ public class LootDataService: ILootDataService, IDisposable {
 
     private async Task LoadData(CosmosClient client) {
         var containerClient = client.GetContainer("main-db", "loot-tables");
-        var feedItr = containerClient.GetItemLinqQueryable<LootTable>().ToFeedIterator();
-        var results = new List<LootTable>();
+        var feedItr = containerClient.GetItemLinqQueryable<LootTableDocument>().ToFeedIterator();
+        var results = new List<LootTableDocument>();
         while (feedItr.HasMoreResults) {
             var response = await feedItr.ReadNextAsync();
             results.AddRange(response.Resource);

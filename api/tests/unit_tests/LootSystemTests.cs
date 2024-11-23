@@ -37,33 +37,33 @@ public class LootSystemTests {
     public void OnResourceHarvestComplete___NoLootTable___NoEventsRaised() {
 
         var resourceId = _faker.Random.Int();
-        LootTable table = null;
+        LootTableDocument table = null;
         _lootData.Setup(m => m.TryGetTable(It.IsAny<int>(), out table)).Returns(false);
-        var resourceHarvestCompleteEvent = new ResourceHarvestComplete() {
+        var resourceHarvestCompleteEvent = new ResourceHarvestCompleteEvent() {
             ResourceId = resourceId
         };
 
         _lootSystem.OnResourceHarvestComplete(resourceHarvestCompleteEvent);
 
-        _eventHub.Verify(x => x.Publish(It.IsAny<ItemGained>()), Times.Never);
+        _eventHub.Verify(x => x.Publish(It.IsAny<ItemGainedEvent>()), Times.Never);
     }
     [Test]
     public void OnResourceHarvestComplete___LootTableContainsNoItemChances___NoEventsRaised() {
 
         var resourceId = _faker.Random.Int(0);
-        LootTable table = new LootTable() {
+        LootTableDocument table = new LootTableDocument() {
             id = "",
             ResourceId = resourceId,
             ItemChances = []
         };
         _lootData.Setup(m => m.TryGetTable(It.IsAny<int>(), out table)).Returns(true);
-        var resourceHarvestCompleteEvent = new ResourceHarvestComplete() {
+        var resourceHarvestCompleteEvent = new ResourceHarvestCompleteEvent() {
             ResourceId = resourceId
         };
 
         _lootSystem.OnResourceHarvestComplete(resourceHarvestCompleteEvent);
 
-        _eventHub.Verify(x => x.Publish(It.IsAny<ItemGained>()), Times.Never);
+        _eventHub.Verify(x => x.Publish(It.IsAny<ItemGainedEvent>()), Times.Never);
     }
 
     [TestCase(0)]
@@ -75,20 +75,20 @@ public class LootSystemTests {
             ItemId = 1,
             ChanceDenominator = chanceDenominator
         };
-        LootTable table = new LootTable() {
+        LootTableDocument table = new LootTableDocument() {
             id = "",
             ResourceId = resourceId,
             ItemChances = [itemChance]
         };
         _lootData.Setup(m => m.TryGetTable(It.IsAny<int>(), out table)).Returns(true);
-        var resourceHarvestCompleteEvent = new ResourceHarvestComplete() {
+        var resourceHarvestCompleteEvent = new ResourceHarvestCompleteEvent() {
             ResourceId = resourceId
         };
         _rng.Setup(m => m.Next(It.IsAny<int>())).Returns(chanceDenominator - 1); //.Next() is maxExclusive so can't return chanceDenominator or higher
 
         _lootSystem.OnResourceHarvestComplete(resourceHarvestCompleteEvent);
         
-        _eventHub.Verify(x => x.Publish(It.IsAny<ItemGained>()), Times.Never);
+        _eventHub.Verify(x => x.Publish(It.IsAny<ItemGainedEvent>()), Times.Never);
     }
 
     [Test]
@@ -99,13 +99,13 @@ public class LootSystemTests {
             ItemId = itemId,
             ChanceDenominator = 1
         };
-        LootTable table = new LootTable() {
+        LootTableDocument table = new LootTableDocument() {
             id = "",
             ResourceId = resourceId,
             ItemChances = [itemChance]
         };
         _lootData.Setup(m => m.TryGetTable(It.IsAny<int>(), out table)).Returns(true);
-        var resourceHarvestCompleteEvent = new ResourceHarvestComplete() {
+        var resourceHarvestCompleteEvent = new ResourceHarvestCompleteEvent() {
             ResourceId = resourceId
         };
         _lootSystem = new LootSystem(_eventHub.Object, _lootData.Object, new RandomNumberGenerator());
@@ -118,13 +118,13 @@ public class LootSystemTests {
         }
 
 
-        _eventHub.Verify(x => x.Publish(It.IsAny<ItemGained>()), Times.Exactly(testsToRun));
+        _eventHub.Verify(x => x.Publish(It.IsAny<ItemGainedEvent>()), Times.Exactly(testsToRun));
     }
 
     private class LootDataStub : ILootDataService
     {
-        private LootTable _table;
-        public LootDataStub(LootTable table) {
+        private LootTableDocument _table;
+        public LootDataStub(LootTableDocument table) {
             _table = table;
         }
 
@@ -133,7 +133,7 @@ public class LootSystemTests {
             throw new NotImplementedException();
         }
 
-        public bool TryGetTable(int resourceId, out LootTable table)
+        public bool TryGetTable(int resourceId, out LootTableDocument table)
         {
             table = _table;
             return true;
@@ -170,19 +170,19 @@ public class LootSystemTests {
             }
         }
 
-        LootTable table = new LootTable() {
+        LootTableDocument table = new LootTableDocument() {
             id = "",
             ResourceId = resourceId,
             ItemChances = lootTableItems
         };
 
-        var resourceHarvestCompleteEvent = new ResourceHarvestComplete() {
+        var resourceHarvestCompleteEvent = new ResourceHarvestCompleteEvent() {
             ResourceId = resourceId
         };
 
         var actualRaised = new Dictionary<int, int>();
         var eventHub = new EventHub();
-        var incrementActual = (ItemGained e) => {
+        var incrementActual = (ItemGainedEvent e) => {
             if (actualRaised.ContainsKey(e.ItemId)) {
                 actualRaised[e.ItemId] += 1;
             }
@@ -190,7 +190,7 @@ public class LootSystemTests {
                 actualRaised.Add(e.ItemId, 1);
             }
         };
-        eventHub.Subscribe<ItemGained>(incrementActual);
+        eventHub.Subscribe<ItemGainedEvent>(incrementActual);
 
         _lootSystem = new LootSystem(eventHub, new LootDataStub(table), new RandomNumberGenerator());
     

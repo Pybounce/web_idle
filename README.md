@@ -11,6 +11,7 @@
   - Loading inventory and skillventory
 - [ ] Actual frontend
   - Make it not shit
+- [ ] Add userId to User document, id will just be managed by the db and can change depending on the DBMS
 
 #### To Think About
 

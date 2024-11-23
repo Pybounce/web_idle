@@ -17,7 +17,7 @@ builder.Services.AddScoped<IAuthSystem, AuthSystem>();
 builder.Services.AddScoped<ITickSystem, TickSystem>();
 builder.Services.AddScoped<IEventHub, EventHub>();
 builder.Services.AddScoped<ILootSystem, LootSystem>();
-builder.Services.AddScoped<IResourceHarvester, ResourceHarvester>();
+builder.Services.AddScoped<IResourceHarvestSystem, ResourceHarvestSystem>();
 builder.Services.AddScoped<IClientReader, ClientReader>();
 builder.Services.AddScoped<IClientWriter, ClientWriter>();
 builder.Services.AddScoped<ISaveSystem, SaveSystem>();

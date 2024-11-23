@@ -10,15 +10,15 @@ public class XpSystem: IXpSystem {
     public XpSystem(IEventHub eventHub) {
         _eventHub = eventHub;
 
-        _eventHub.Subscribe<ResourceHarvestComplete>(OnResourceHarvestComplete);
+        _eventHub.Subscribe<ResourceHarvestCompleteEvent>(OnResourceHarvestComplete);
     }
 
-    private void OnResourceHarvestComplete(ResourceHarvestComplete e) {
+    private void OnResourceHarvestComplete(ResourceHarvestCompleteEvent e) {
         _eventHub.Publish<XpGainedEvent>(new XpGainedEvent(e.ResourceId, 1));
     }
 
     public void Dispose() {
-        _eventHub.Unsubscribe<ResourceHarvestComplete>(OnResourceHarvestComplete);
+        _eventHub.Unsubscribe<ResourceHarvestCompleteEvent>(OnResourceHarvestComplete);
     }
 
 }

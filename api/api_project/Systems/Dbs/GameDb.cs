@@ -16,7 +16,7 @@ public class GameDb: IGameDb, IDisposable {
     public async Task SavePlayerInventoryAsync(Inventory inventory) {
         var userId = "0";
         var inventoryId = "0";
-        var playerInventory = new PlayerInventory() {
+        var playerInventory = new InventoryDocument() {
             UserId = userId,
             id = inventoryId,
             Items = inventory.GetItems()
@@ -24,7 +24,7 @@ public class GameDb: IGameDb, IDisposable {
 
         var container = _dbClient.GetDatabase("main-db").GetContainer("main-container");
 
-        await container.UpsertItemAsync<PlayerInventory>(playerInventory);
+        await container.UpsertItemAsync<InventoryDocument>(playerInventory);
 
     }
 

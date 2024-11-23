@@ -9,9 +9,9 @@ public interface IClientReader {
 
 public class ClientReader: IClientReader {
 
-    private readonly IResourceHarvester _playerActionManager;
+    private readonly IResourceHarvestSystem _playerActionManager;
 
-    public ClientReader(IResourceHarvester playerActionManager) {
+    public ClientReader(IResourceHarvestSystem playerActionManager) {
         _playerActionManager = playerActionManager;
     }
 

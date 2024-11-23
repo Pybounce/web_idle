@@ -11,8 +11,12 @@ public class HostedDataService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using (var scope = _serviceProvider.CreateScope()) {
-            var lootDataService = scope.ServiceProvider.GetRequiredService<ILootDataService>();
-            await lootDataService.InitAsync();
+            var dataServices = new List<IDataService>() {
+                scope.ServiceProvider.GetRequiredService<ILootDataService>()
+            };
+            foreach (var dataService in dataServices) {
+                await dataService.InitAsync();
+            }
         }
     }
 
@@ -20,4 +24,8 @@ public class HostedDataService : IHostedService
     {
         return Task.CompletedTask;
     }
+}
+
+public interface IDataService {
+    public Task InitAsync();
 }
